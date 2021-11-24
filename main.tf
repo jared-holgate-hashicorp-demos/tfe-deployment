@@ -1,3 +1,7 @@
+variable "vpc_name" {
+    default = "tfe-deployment-aws-standalone-external-services"
+}
+
 terraform {
   backend "remote" {
     organization = "jaredfholgate-hashicorp"
@@ -20,4 +24,8 @@ provider "aws" {
 
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = var.vpc_name
+  }
 }
