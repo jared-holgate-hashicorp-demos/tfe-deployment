@@ -1,4 +1,11 @@
 terraform {
+  backend "remote" {
+    organization = "jaredfholgate-hashicorp"
+
+    workspaces {
+      name = "tfe-deployment-aws-standalone-external-services"
+    }
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
