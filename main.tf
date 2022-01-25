@@ -1,7 +1,7 @@
 variable "friendly_name_prefix" {
   type        = string
   description = "(Optional) Friendly name prefix used for tagging and naming AWS resources."
-  default = "tfe-deployment-aws-standalone-external-services"
+  default = "jared-holgate-tfe-poc"
 }
 
 # Network
