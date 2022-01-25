@@ -24,13 +24,6 @@ variable "network_public_subnet_cidrs" {
 }
 
 terraform {
-  cloud {
-    organization = "jaredfholgate-hashicorp"
-
-    workspaces {
-      name = "tfe-learning"
-    }
-  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
