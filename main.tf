@@ -66,10 +66,11 @@ resource "aws_route_table" "internet" {
 }
 
 resource "aws_subnet" "public" {
+  count = 2
   vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.1.0/24"
+  cidr_block = "10.0.${count.index}.0/24"
   map_public_ip_on_launch = true
-  availability_zone_id = data.aws_availability_zones.available.zone_ids[0]
+  availability_zone_id = data.aws_availability_zones.available.zone_ids[count.index]
 
   tags = {
     Name = "${var.friendly_name_prefix}-subnet-public"
@@ -78,30 +79,21 @@ resource "aws_subnet" "public" {
   depends_on                = [aws_internet_gateway.main]
 }
 
-resource "aws_subnet" "public_ha" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.3.0/24"
-  map_public_ip_on_launch = true
-  availability_zone_id = data.aws_availability_zones.available.zone_ids[1]
-  tags = {
-    Name = "${var.friendly_name_prefix}-subnet-public-ha"
-  }
-
-  depends_on                = [aws_internet_gateway.main]
-}
-
 resource "aws_route_table_association" "bastion" {
-  subnet_id      = aws_subnet.public.id
+  count = 2
+  subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.internet.id
 }
 
 resource "aws_eip" "nat" {
+  count = 2
   vpc = true
 }
 
 resource "aws_nat_gateway" "nat-gw" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public.id
+  count = 2
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
   depends_on    = [aws_internet_gateway.main]
 }
 
@@ -114,8 +106,9 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
+  count = 2
   subnet_id      = aws_subnet.private.id
-  route_table_id = aws_route_table.private.id
+  route_table_id = aws_route_table.private[count.index].id
 }
 
 resource "aws_subnet" "private" {
@@ -167,8 +160,8 @@ resource "aws_security_group" "bastion" {
 }
 
 resource "aws_network_interface" "bastion" {
-   subnet_id   = aws_subnet.public.id
-   private_ips = ["10.0.1.101"]
+   subnet_id   = aws_subnet.public[0].id
+   private_ips = ["10.0.0.101"]
    security_groups = [ aws_security_group.bastion.id ]
    
   tags = {
@@ -298,7 +291,7 @@ resource "aws_lb" "tfe" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
-  subnets            = [ aws_subnet.public.id, aws_subnet.public_ha.id ]
+  subnets            = [ aws_subnet.public[0].id, aws_subnet.public[1].id ]
 
   tags = {
     Name = "${var.friendly_name_prefix}-alb"
