@@ -32,6 +32,10 @@ provider "cloudflare" {
 
 data "aws_region" "current" {}
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 resource "aws_vpc" "main" {
   cidr_block       = "10.0.0.0/16"
   enable_dns_hostnames = true
@@ -65,9 +69,22 @@ resource "aws_subnet" "public" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
   map_public_ip_on_launch = true
+  availability_zone_id = data.aws_availability_zones.available.zone_ids[0]
 
   tags = {
     Name = "${var.friendly_name_prefix}-subnet-public"
+  }
+
+  depends_on                = [aws_internet_gateway.main]
+}
+
+resource "aws_subnet" "public_ha" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.3.0/24"
+  map_public_ip_on_launch = true
+  availability_zone_id = data.aws_availability_zones.available.zone_ids[1]
+  tags = {
+    Name = "${var.friendly_name_prefix}-subnet-public-ha"
   }
 
   depends_on                = [aws_internet_gateway.main]
@@ -281,7 +298,7 @@ resource "aws_lb" "tfe" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
-  subnets            = [ aws_subnet.public.id ]
+  subnets            = [ aws_subnet.public.id, aws_subnet.public_ha.id ]
 
   tags = {
     Name = "${var.friendly_name_prefix}-alb"
