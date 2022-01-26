@@ -1,5 +1,5 @@
 resource "aws_vpc" "main" {
-  cidr_block       = "10.0.0.0/16"
+  cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
 
   tags = {
@@ -16,7 +16,7 @@ resource "aws_internet_gateway" "main" {
 
 resource "aws_eip" "nat" {
   count = local.subnet_count
-  vpc = true
+  vpc   = true
 
   tags = {
     Name = "${var.friendly_name_prefix}-eip-nat-${count.index}"
@@ -24,12 +24,12 @@ resource "aws_eip" "nat" {
 }
 
 resource "aws_nat_gateway" "nat-gw" {
-  count = local.subnet_count
+  count         = local.subnet_count
   allocation_id = aws_eip.nat[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
   depends_on    = [aws_internet_gateway.main]
 
- tags = {
+  tags = {
     Name = "${var.friendly_name_prefix}-nat-${count.index}"
   }
 }

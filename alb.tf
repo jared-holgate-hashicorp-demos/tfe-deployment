@@ -22,7 +22,7 @@ resource "aws_lb_target_group" "tfe" {
 }
 
 resource "aws_lb_target_group_attachment" "tfe" {
-  count = 2
+  count            = 2
   target_group_arn = aws_lb_target_group.tfe.arn
   target_id        = aws_instance.tfe[count.index].id
   port             = 80

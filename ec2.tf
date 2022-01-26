@@ -33,10 +33,10 @@ resource "aws_eip" "bastion" {
 }
 
 resource "aws_network_interface" "bastion" {
-   subnet_id   = aws_subnet.public[0].id
-   private_ips = ["10.0.0.101"]
-   security_groups = [ aws_security_group.bastion.id ]
-   
+  subnet_id       = aws_subnet.public[0].id
+  private_ips     = ["10.0.0.101"]
+  security_groups = [aws_security_group.bastion.id]
+
   tags = {
     Name = "${var.friendly_name_prefix}-bastion-network-interface"
   }
@@ -51,7 +51,7 @@ resource "aws_instance" "bastion" {
     device_index         = 0
   }
 
-  provisioner "local-exec" { 
+  provisioner "local-exec" {
     command = "echo '${tls_private_key.main.private_key_pem}' > ./tfe.pem"
   }
 
@@ -69,10 +69,10 @@ EOF
 }
 
 resource "aws_network_interface" "tfe" {
-  count = 2
-  subnet_id   = aws_subnet.private.id
-  private_ips = ["10.0.100.10${count.index}"]
-  security_groups = [ aws_security_group.tfe.id ] 
+  count           = 2
+  subnet_id       = aws_subnet.private.id
+  private_ips     = ["10.0.100.10${count.index}"]
+  security_groups = [aws_security_group.tfe.id]
 
   tags = {
     Name = "${var.friendly_name_prefix}-tfe-network-interface-${count.index}"
@@ -80,7 +80,7 @@ resource "aws_network_interface" "tfe" {
 }
 
 resource "aws_instance" "tfe" {
-  count = 2
+  count         = 2
   ami           = data.aws_ami.ubuntu.id
   instance_type = "m5.xlarge"
   key_name      = aws_key_pair.main.key_name

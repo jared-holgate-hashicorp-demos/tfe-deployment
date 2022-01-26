@@ -1,6 +1,6 @@
 resource "aws_security_group" "bastion" {
   name   = "${var.friendly_name_prefix}-bastion-security-group"
-  vpc_id = "${aws_vpc.main.id}"
+  vpc_id = aws_vpc.main.id
 
   egress {
     from_port   = 0
@@ -23,7 +23,7 @@ resource "aws_security_group" "bastion" {
 
 resource "aws_security_group" "tfe" {
   name   = "${var.friendly_name_prefix}-tfe-security-group"
-  vpc_id = "${aws_vpc.main.id}"
+  vpc_id = aws_vpc.main.id
 
   egress {
     from_port   = 0
@@ -46,7 +46,7 @@ resource "aws_security_group" "tfe" {
 
 resource "aws_security_group" "alb" {
   name   = "${var.friendly_name_prefix}-alb-security-group"
-  vpc_id = "${aws_vpc.main.id}"
+  vpc_id = aws_vpc.main.id
 
   egress {
     from_port   = 0

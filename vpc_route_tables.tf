@@ -12,7 +12,7 @@ resource "aws_route_table" "internet" {
 }
 
 resource "aws_route_table" "private" {
-  count = local.subnet_count
+  count  = local.subnet_count
   vpc_id = aws_vpc.main.id
   route {
     cidr_block     = "0.0.0.0/0"
