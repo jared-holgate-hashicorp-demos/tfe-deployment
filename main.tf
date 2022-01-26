@@ -63,7 +63,6 @@ resource "aws_subnet" "private" {
   }
 }
 
-
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -78,4 +77,29 @@ data "aws_ami" "ubuntu" {
   }
 
   owners = ["099720109477"] # Canonical
+}
+
+resource "aws_network_interface" "tfe" {
+  count = 2
+  subnet_id   = aws_subnet.private.id
+  private_ips = ["10.0.2.10${count.index}"]
+   
+  tags = {
+    Name = "primary_network_interface"
+  }
+}
+
+resource "aws_instance" "tfe" {
+  count = 2
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t3.micro"
+
+  network_interface {
+    network_interface_id = aws_network_interface.tfe[count.index].id
+    device_index         = 0
+  }
+
+  tags = {
+    Name = "TFE_Server_${count.index}"
+  }
 }
