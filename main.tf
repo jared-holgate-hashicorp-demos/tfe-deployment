@@ -83,6 +83,30 @@ resource "aws_route_table_association" "bastion" {
   route_table_id = aws_route_table.internet.id
 }
 
+resource "aws_eip" "nat" {
+  vpc = true
+}
+
+resource "aws_nat_gateway" "nat-gw" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public.id
+  depends_on    = [aws_internet_gateway.main]
+}
+
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat-gw.id
+  }
+}
+
+resource "aws_route_table_association" "private-rta" {
+  subnet_id      = aws_subnet.private.id
+  route_table_id = aws_route_table.private-rt.id
+}
+
+
 resource "aws_subnet" "private" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.2.0/24"
@@ -111,6 +135,13 @@ data "aws_ami" "ubuntu" {
 resource "aws_security_group" "bastion" {
   name   = "${var.friendly_name_prefix}-bastion-security-group"
   vpc_id = "${aws_vpc.main.id}"
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   ingress {
     protocol    = "tcp"
@@ -145,12 +176,21 @@ resource "aws_eip" "bastion" {
 resource "aws_instance" "bastion" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
-  
 
   network_interface {
     network_interface_id = aws_network_interface.bastion.id
     device_index         = 0
   }
+
+  provisioner "local-exec" { 
+    command = "echo '${tls_private_key.main.private_key_pem}' > ./tfe.pem"
+  }
+
+  user_data = <<EOF
+#!/bin/bash
+"echo '${tls_private_key.main.private_key_pem}' > ./tfe.pem"
+chmod 400 myKey.pem
+EOF
 
   tags = {
     Name = "${var.friendly_name_prefix}-bastion-server"
@@ -171,6 +211,7 @@ resource "aws_instance" "tfe" {
   count = 2
   ami           = data.aws_ami.ubuntu.id
   instance_type = "m5.xlarge"
+  key_name      = aws_key_pair.main.key_name
 
   network_interface {
     network_interface_id = aws_network_interface.tfe[count.index].id
@@ -180,4 +221,18 @@ resource "aws_instance" "tfe" {
   tags = {
     Name = "${var.friendly_name_prefix}-tfe-server-${count.index}"
   }
+}
+
+resource "tls_private_key" "main" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "main" {
+  key_name   = "main"
+  public_key = tls_private_key.main.public_key_openssh
+}
+
+output "private_key" {
+  value = tls_private_key.main.private_key
 }
