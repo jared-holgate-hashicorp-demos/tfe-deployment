@@ -131,7 +131,7 @@ resource "aws_network_interface" "tfe" {
 resource "aws_instance" "tfe" {
   count = 2
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
+  instance_type = "m5.xlarge"
 
   network_interface {
     network_interface_id = aws_network_interface.tfe[count.index].id
