@@ -49,6 +49,7 @@ resource "aws_subnet" "public" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
 
+
   tags = {
     Name = "${var.friendly_name_prefix}-public"
   }
@@ -79,30 +80,7 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "aws_network_interface" "bastion" {
-   subnet_id   = aws_subnet.public.id
-   private_ips = ["10.0.1.101"]
-   
-  tags = {
-    Name = "${var.friendly_name_prefix}-bastion-network-interface"
-  }
-}
-
-resource "aws_instance" "bastion" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
-
-  network_interface {
-    network_interface_id = aws_network_interface.bastion.id
-    device_index         = 0
-  }
-
-  tags = {
-    Name = "${var.friendly_name_prefix}-bastion-server"
-  }
-}
-
-resource "aws_security_group" "bastion-sg" {
+resource "aws_security_group" "bastion" {
   name   = "${var.friendly_name_prefix}-bastion-security-group"
   vpc_id = "${aws_vpc.main.id}"
 
@@ -117,6 +95,33 @@ resource "aws_security_group" "bastion-sg" {
     Name = "${var.friendly_name_prefix}-bastion-security-group"
   }
 }
+
+resource "aws_network_interface" "bastion" {
+   subnet_id   = aws_subnet.public.id
+   private_ips = ["10.0.1.101"]
+   
+  tags = {
+    Name = "${var.friendly_name_prefix}-bastion-network-interface"
+  }
+}
+
+resource "aws_instance" "bastion" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  associate_public_ip_address = true
+  vpc_security_group_ids = [ aws_security_group.bastion.id ]
+
+  network_interface {
+    network_interface_id = aws_network_interface.bastion.id
+    device_index         = 0
+  }
+
+  tags = {
+    Name = "${var.friendly_name_prefix}-bastion-server"
+  }
+}
+
+
 
 resource "aws_network_interface" "tfe" {
   count = 2
