@@ -324,21 +324,20 @@ data "cloudflare_zone" "tfe" {
 }
 
 resource "cloudflare_record" "tfe_cert" {
-  zone_id = cloudflare_zone.tfe.id
-  name    = aws_acm_certificate.tfe.domain_validation_options[0].resource_record_name
-  value   = aws_acm_certificate.tfe.domain_validation_options[0].resource_record_value
-  type    = aws_acm_certificate.tfe.domain_validation_options[0].resource_record_type
+  zone_id = data.cloudflare_zone.tfe.id
+  name    = tolist(aws_acm_certificate.tfe.domain_validation_options)[0].resource_record_name
+  value   = tolist(aws_acm_certificate.tfe.domain_validation_options)[0].resource_record_value
+  type    = tolist(aws_acm_certificate.tfe.domain_validation_options)[0].resource_record_type
   ttl     = 3600
 }
 
 resource "cloudflare_record" "tfe" {
-  zone_id = cloudflare_zone.tfe.id
+  zone_id = data.cloudflare_zone.tfe.id
   name    = "tfe.hashicorpdemo.net"
   value   = aws_lb.tfe.dns_name
   type    = "CNAME"
   ttl     = 3600
 }
-
 
 resource "aws_lb_listener" "tfe" {
   load_balancer_arn = aws_lb.tfe.arn
@@ -349,7 +348,7 @@ resource "aws_lb_listener" "tfe" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.front_end.arn
+    target_group_arn = aws_lb_target_group.tfe.arn
   }
 }
 
