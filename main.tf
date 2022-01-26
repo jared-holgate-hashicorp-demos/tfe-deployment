@@ -198,11 +198,35 @@ EOF
   }
 }
 
+resource "aws_security_group" "tfe" {
+  name   = "${var.friendly_name_prefix}-tfe-security-group"
+  vpc_id = "${aws_vpc.main.id}"
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 22
+    to_port     = 22
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.friendly_name_prefix}-tfe-security-group"
+  }
+}
+
 resource "aws_network_interface" "tfe" {
   count = 2
   subnet_id   = aws_subnet.private.id
   private_ips = ["10.0.2.10${count.index}"]
-   
+  security_groups = [ aws_security_group.tfe.id ] 
+
   tags = {
     Name = "${var.friendly_name_prefix}-tfe-network-interface-${count.index}"
   }
