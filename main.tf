@@ -53,16 +53,16 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-resource "aws_route_table" "bastion" {
+resource "aws_route_table" "internet" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = "10.0.1.101/32"
+    cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.main.id
   }
 
   tags = {
-    Name = "${var.friendly_name_prefix}-bastion-route-table"
+    Name = "${var.friendly_name_prefix}-internet-route-table"
   }
 }
 
@@ -80,7 +80,7 @@ resource "aws_subnet" "public" {
 
 resource "aws_route_table_association" "bastion" {
   subnet_id      = aws_subnet.public.id
-  route_table_id = aws_route_table.bastion.id
+  route_table_id = aws_route_table.internet.id
 }
 
 resource "aws_subnet" "private" {
