@@ -277,7 +277,7 @@ resource "aws_security_group" "alb" {
 }
 
 resource "aws_lb" "tfe" {
-  name               = "${var.friendly_name_prefix}-alb"
+  name               = "alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
@@ -289,7 +289,7 @@ resource "aws_lb" "tfe" {
 }
 
 resource "aws_lb_target_group" "tfe" {
-  name     = "${var.friendly_name_prefix}-alb-target-group"
+  name     = "alb-tg"
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
