@@ -39,20 +39,30 @@ data "aws_region" "current" {}
 
 resource "aws_vpc" "main" {
   cidr_block       = "10.0.0.0/16"
+  enable_dns_hostnames = true
 
   tags = {
-    Name = var.friendly_name_prefix
+    Name = "${var.friendly_name_prefix}-vpc"
+  }
+}
+
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+  tags = {
+    Name = "${var.friendly_name_prefix}-gateway"
   }
 }
 
 resource "aws_subnet" "public" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
-
+  map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.friendly_name_prefix}-public"
+    Name = "${var.friendly_name_prefix}-subnet-public"
   }
+
+  depends_on                = [aws_internet_gateway.main]
 }
 
 resource "aws_subnet" "private" {
@@ -60,7 +70,7 @@ resource "aws_subnet" "private" {
   cidr_block = "10.0.2.0/24"
 
   tags = {
-    Name = "${var.friendly_name_prefix}-private"
+    Name = "${var.friendly_name_prefix}-subnet-private"
   }
 }
 
@@ -99,17 +109,25 @@ resource "aws_security_group" "bastion" {
 resource "aws_network_interface" "bastion" {
    subnet_id   = aws_subnet.public.id
    private_ips = ["10.0.1.101"]
+   security_groups = [ aws_security_group.bastion.id ]
    
   tags = {
     Name = "${var.friendly_name_prefix}-bastion-network-interface"
   }
 }
 
+resource "aws_eip" "bastion" {
+  vpc = true
+
+  instance                  = aws_instance.bastion.id
+  associate_with_private_ip = "10.0.1.101"
+  depends_on                = [aws_internet_gateway.main]
+}
+
 resource "aws_instance" "bastion" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
-  associate_public_ip_address = true
-  vpc_security_group_ids = [ aws_security_group.bastion.id ]
+  
 
   network_interface {
     network_interface_id = aws_network_interface.bastion.id
@@ -120,8 +138,6 @@ resource "aws_instance" "bastion" {
     Name = "${var.friendly_name_prefix}-bastion-server"
   }
 }
-
-
 
 resource "aws_network_interface" "tfe" {
   count = 2
