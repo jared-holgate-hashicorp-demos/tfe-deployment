@@ -16,5 +16,5 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  subnet_count = length(data.aws_availability_zones.available.zones_ids)
+  subnet_count = length(data.aws_availability_zones.available.zone_ids)
 }
