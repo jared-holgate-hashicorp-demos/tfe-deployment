@@ -323,7 +323,7 @@ data "cloudflare_zone" "tfe" {
   name = "hashicorpdemo.net"
 }
 
-resource "cloudflare_record" "tfe" {
+resource "cloudflare_record" "tfe_cert" {
   zone_id = cloudflare_zone.tfe.id
   name    = aws_acm_certificate.tfe.domain_validation_options[0].resource_record_name
   value   = aws_acm_certificate.tfe.domain_validation_options[0].resource_record_value
