@@ -70,7 +70,7 @@ EOF
 
 resource "aws_network_interface" "tfe" {
   count           = 2
-  subnet_id       = aws_subnet.private.id
+  subnet_id       = aws_subnet.private[0].id
   private_ips     = ["10.0.100.10${count.index}"]
   security_groups = [aws_security_group.tfe.id]
 
