@@ -254,7 +254,7 @@ resource "aws_key_pair" "main" {
 }
 
 resource "aws_security_group" "alb" {
-  name   = "${var.friendly_name_prefix}-tfe-security-group"
+  name   = "${var.friendly_name_prefix}-alb-security-group"
   vpc_id = "${aws_vpc.main.id}"
 
   egress {
