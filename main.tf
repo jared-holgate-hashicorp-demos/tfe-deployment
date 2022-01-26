@@ -187,8 +187,10 @@ resource "aws_instance" "bastion" {
 
   user_data = <<EOF
 #!/bin/bash
-"echo '${tls_private_key.main.private_key_pem}' > ./tfe.pem"
-chmod 400 myKey.pem
+
+privateKey="${tls_private_key.main.private_key_pem}"
+echo "$privateKey" > tfe.pem
+chmod 400 tfe.pem
 EOF
 
   tags = {
