@@ -79,13 +79,48 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+resource "aws_network_interface" "bastion" {
+   subnet_id   = aws_subnet.public.id
+   private_ips = ["10.0.1.101"]
+   
+  tags = {
+    Name = "${var.friendly_name_prefix}-bastion-network-interface"
+  }
+}
+
+resource "aws_instance" "bastion" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+
+  network_interface {
+    network_interface_id = aws_network_interface.bastion.id
+    device_index         = 0
+  }
+
+  tags = {
+    Name = "${var.friendly_name_prefix}-Bastion-Server"
+  }
+}
+
+resource "aws_security_group" "bastion-sg" {
+  name   = "${var.friendly_name_prefix}-bastion-security-group"
+  vpc_id = "${aws_default_vpc.main.id}"
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 22
+    to_port     = 22
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_network_interface" "tfe" {
   count = 2
   subnet_id   = aws_subnet.private.id
   private_ips = ["10.0.2.10${count.index}"]
    
   tags = {
-    Name = "primary_network_interface"
+    Name = "${var.friendly_name_prefix}-tfe-network-interface-${count.index}"
   }
 }
 
@@ -100,6 +135,6 @@ resource "aws_instance" "tfe" {
   }
 
   tags = {
-    Name = "TFE_Server_${count.index}"
+    Name = "${var.friendly_name_prefix}-TFE-Server-${count.index}"
   }
 }
