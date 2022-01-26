@@ -98,7 +98,7 @@ resource "aws_instance" "bastion" {
   }
 
   tags = {
-    Name = "${var.friendly_name_prefix}-Bastion-Server"
+    Name = "${var.friendly_name_prefix}-bastion-server"
   }
 }
 
@@ -111,6 +111,10 @@ resource "aws_security_group" "bastion-sg" {
     from_port   = 22
     to_port     = 22
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.friendly_name_prefix}-bastion-security-group"
   }
 }
 
@@ -135,6 +139,6 @@ resource "aws_instance" "tfe" {
   }
 
   tags = {
-    Name = "${var.friendly_name_prefix}-TFE-Server-${count.index}"
+    Name = "${var.friendly_name_prefix}-tfe-server-${count.index}"
   }
 }
