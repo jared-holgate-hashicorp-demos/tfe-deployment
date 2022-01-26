@@ -3,7 +3,7 @@ resource "aws_lb" "tfe" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
-  subnets            = [ aws_subnet.public[0].id, aws_subnet.public[1].id ]
+  subnets            = aws_subnet.public[*].id
 
   tags = {
     Name = "${var.friendly_name_prefix}-alb"

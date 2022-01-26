@@ -24,6 +24,14 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+resource "aws_eip" "bastion" {
+  vpc = true
+
+  instance                  = aws_instance.bastion.id
+  associate_with_private_ip = "10.0.0.101"
+  depends_on                = [aws_internet_gateway.main]
+}
+
 resource "aws_network_interface" "bastion" {
    subnet_id   = aws_subnet.public[0].id
    private_ips = ["10.0.0.101"]
@@ -63,7 +71,7 @@ EOF
 resource "aws_network_interface" "tfe" {
   count = 2
   subnet_id   = aws_subnet.private.id
-  private_ips = ["10.0.2.10${count.index}"]
+  private_ips = ["10.0.100.10${count.index}"]
   security_groups = [ aws_security_group.tfe.id ] 
 
   tags = {
