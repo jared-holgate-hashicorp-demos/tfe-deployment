@@ -101,11 +101,10 @@ resource "aws_route_table" "private" {
   }
 }
 
-resource "aws_route_table_association" "private-rta" {
+resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.private.id
-  route_table_id = aws_route_table.private-rt.id
+  route_table_id = aws_route_table.private.id
 }
-
 
 resource "aws_subnet" "private" {
   vpc_id     = aws_vpc.main.id
@@ -231,8 +230,4 @@ resource "tls_private_key" "main" {
 resource "aws_key_pair" "main" {
   key_name   = "main"
   public_key = tls_private_key.main.public_key_openssh
-}
-
-output "private_key" {
-  value = tls_private_key.main.private_key
 }
