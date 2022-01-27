@@ -78,6 +78,20 @@ systemctl start apache2.service
 cd /var/www/html
 echo "<html><body><h1>Hello World - Server %s</h1></body></html>" > index.html 
 EOF 
+
+    tfe_script = <<EOF
+#!/bin/bash
+apt update -y
+apt install ca-certificates curl gnupg lsb-release
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+apt update
+apt install docker-ce docker-ce-cli containerd.io
+apt install containerd
+curl https://install.terraform.io/ptfe/stable | sudo bash
+EOF 
 }
 
 resource "aws_network_interface" "tfe" {
@@ -103,7 +117,7 @@ resource "aws_instance" "tfe" {
     device_index         = 0
   }
 
-  user_data = var.create_hello_world ? format(local.hello_word_script, count.index) : ""
+  user_data = var.create_hello_world ? format(local.hello_word_script, count.index) : local.tfe_script
 
   tags = {
     Name = "${var.friendly_name_prefix}-tfe-server-${count.index}"
