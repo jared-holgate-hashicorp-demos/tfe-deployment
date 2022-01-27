@@ -33,14 +33,14 @@ resource "aws_lb_target_group" "replicated" {
 }
 
 resource "aws_lb_target_group_attachment" "tfe" {
-  count            = 2
+  count            = var.create_hello_world ? 2 : 1
   target_group_arn = aws_lb_target_group.tfe.arn
   target_id        = aws_instance.tfe[count.index].id
   port             = var.create_hello_world ? 80 : 443
 }
 
 resource "aws_lb_target_group_attachment" "replicated" {
-  count            = 2
+  count            = 1
   target_group_arn = aws_lb_target_group.tfe.arn
   target_id        = aws_instance.tfe[count.index].id
   port             = 8800
