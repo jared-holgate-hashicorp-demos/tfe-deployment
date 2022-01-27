@@ -48,7 +48,7 @@ data "cloudflare_zone" "tfe" {
 resource "cloudflare_record" "tfe_cert" {
   zone_id = data.cloudflare_zone.tfe.id
   name    = tolist(aws_acm_certificate.tfe.domain_validation_options)[0].resource_record_name
-  value   = trimsuffix(tolist(aws_acm_certificate.tfe.domain_validation_options)[0].resource_record_value)
+  value   = trimsuffix(tolist(aws_acm_certificate.tfe.domain_validation_options)[0].resource_record_value, ".")
   type    = tolist(aws_acm_certificate.tfe.domain_validation_options)[0].resource_record_type
   ttl     = 3600
 }
