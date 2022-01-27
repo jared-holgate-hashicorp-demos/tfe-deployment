@@ -79,7 +79,7 @@ cd /var/www/html
 echo "<html><body><h1>Hello World - Server %s</h1></body></html>" > index.html 
 EOF 
 
-    tfe_script = <<EOF
+  tfe_script = <<EOF
 #!/bin/bash
 apt update -y
 apt install ca-certificates curl gnupg lsb-release
