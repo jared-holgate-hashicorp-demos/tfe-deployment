@@ -41,7 +41,7 @@ resource "aws_lb_target_group_attachment" "tfe" {
 
 resource "aws_lb_target_group_attachment" "replicated" {
   count            = 1
-  target_group_arn = aws_lb_target_group.tfe.arn
+  target_group_arn = aws_lb_target_group.replicated.arn
   target_id        = aws_instance.tfe[count.index].id
   port             = 8800
 }
