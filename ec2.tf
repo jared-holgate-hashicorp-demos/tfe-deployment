@@ -122,7 +122,7 @@ resource "aws_ebs_volume" "tfe" {
 
 resource "aws_volume_attachment" "tfe" {
   count       = 2
-  device_name = "/opt/tfe"
+  device_name = "/dev/sdh"
   volume_id   = aws_ebs_volume.tfe[count.index].id
   instance_id = aws_instance.tfe[count.index].id
 }
