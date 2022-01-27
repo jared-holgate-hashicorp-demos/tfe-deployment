@@ -77,7 +77,6 @@ apt install apache2 -yclear
 systemctl start apache2.service
 cd /var/www/html
 echo "<html><body><h1>Hello World - Server %s</h1></body></html>" > index.html 
-echo "" >> index.html 
 EOF 
 }
 
