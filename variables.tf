@@ -23,15 +23,15 @@ variable "replicated_sub_domain" {
 }
 
 variable "tfe_ip_restrictions" {
-    type        = list(string)
-    description = "The IP restrictions for tfe."
-    default     = []
+  type        = list(string)
+  description = "The IP restrictions for tfe."
+  default     = []
 }
 
 variable "replicated_ip_restrictions" {
-    type        = list(string)
-    description = "The IP restrictions for replicated."
-    default     = ["217.155.46.217/32"]
+  type        = list(string)
+  description = "The IP restrictions for replicated."
+  default     = ["217.155.46.217/32"]
 }
 
 variable "create_hello_world" {
