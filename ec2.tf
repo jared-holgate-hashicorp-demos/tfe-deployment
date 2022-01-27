@@ -47,8 +47,8 @@ resource "aws_network_interface" "bastion" {
 }
 
 resource "aws_instance" "bastion" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
+  ami               = data.aws_ami.ubuntu.id
+  instance_type     = "t2.micro"
   availability_zone = data.aws_availability_zones.available.names[0]
 
   network_interface {
@@ -69,17 +69,6 @@ EOF
   }
 }
 
-resource "aws_network_interface" "tfe" {
-  count           = 2
-  subnet_id       = aws_subnet.private[count.index].id
-  private_ips     = ["10.0.${count.index + 100}.10${count.index}"]
-  security_groups = [aws_security_group.tfe.id]
-
-  tags = {
-    Name = "${var.friendly_name_prefix}-tfe-network-interface-${count.index}"
-  }
-}
-
 locals {
   hello_word_script = <<EOF
 #!/bin/bash
@@ -93,11 +82,22 @@ echo "</h1></body></html>" >> index.html
 EOF 
 }
 
+resource "aws_network_interface" "tfe" {
+  count           = 2
+  subnet_id       = aws_subnet.private[count.index].id
+  private_ips     = ["10.0.${count.index + 100}.10${count.index}"]
+  security_groups = [aws_security_group.tfe.id]
+
+  tags = {
+    Name = "${var.friendly_name_prefix}-tfe-network-interface-${count.index}"
+  }
+}
+
 resource "aws_instance" "tfe" {
-  count         = 2
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "m5.xlarge"
-  key_name      = aws_key_pair.main.key_name
+  count             = 2
+  ami               = data.aws_ami.ubuntu.id
+  instance_type     = "m5.xlarge"
+  key_name          = aws_key_pair.main.key_name
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   network_interface {

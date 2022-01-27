@@ -19,9 +19,10 @@ resource "aws_route_table_association" "bastion" {
 }
 
 resource "aws_subnet" "private" {
-  count      = local.subnet_count
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.${count.index + 100}.0/24"
+  count                = local.subnet_count
+  vpc_id               = aws_vpc.main.id
+  cidr_block           = "10.0.${count.index + 100}.0/24"
+  availability_zone_id = data.aws_availability_zones.available.zone_ids[count.index]
 
   tags = {
     Name = "${var.friendly_name_prefix}-subnet-private-${count.index}"
