@@ -51,10 +51,6 @@ resource "aws_instance" "bastion" {
     device_index         = 0
   }
 
-  provisioner "local-exec" {
-    command = "echo '${tls_private_key.main.private_key_pem}' > ./tfe.pem"
-  }
-
   user_data = <<EOF
 #!/bin/bash
 
@@ -79,6 +75,19 @@ resource "aws_network_interface" "tfe" {
   }
 }
 
+locals {
+  hello_word_script = <<EOF
+#!/bin/bash
+yum update -y
+yum install httpd -y
+service httpd start
+cd /var/www/html
+echo "<html><body><h1>Hello World - My IP is" > index.html 
+curl http://169.254.169.254/latest/meta-data/public-ipv4 >> index.html
+echo "</h1></body></html>" >> index.html 
+EOF 
+}
+
 resource "aws_instance" "tfe" {
   count         = 2
   ami           = data.aws_ami.ubuntu.id
@@ -89,6 +98,8 @@ resource "aws_instance" "tfe" {
     network_interface_id = aws_network_interface.tfe[count.index].id
     device_index         = 0
   }
+
+  user_data = var.create_hello_world ? local.hello_word_script : ""
 
   tags = {
     Name = "${var.friendly_name_prefix}-tfe-server-${count.index}"

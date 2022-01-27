@@ -3,3 +3,9 @@ variable "friendly_name_prefix" {
   description = "(Optional) Friendly name prefix used for tagging and naming AWS resources."
   default     = "jfh-tfe-poc"
 }
+
+variable "create_hello_world" {
+    type        = boolean
+    description = "(Optional) Create a Hello World application."
+    default     = false
+}
