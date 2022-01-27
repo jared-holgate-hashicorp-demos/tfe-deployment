@@ -73,12 +73,11 @@ locals {
   hello_word_script = <<EOF
 #!/bin/bash
 apt update -y
-apt install apache2 -y
+apt install apache2 -yclear
 systemctl start apache2.service
 cd /var/www/html
-echo "<html><body><h1>Hello World - My IP is" > index.html 
-curl http://169.254.169.254/latest/meta-data/public-ipv4 >> index.html
-echo "</h1></body></html>" >> index.html 
+echo "<html><body><h1>Hello World - Server %s</h1></body></html>" > index.html 
+echo "" >> index.html 
 EOF 
 }
 
@@ -105,7 +104,7 @@ resource "aws_instance" "tfe" {
     device_index         = 0
   }
 
-  user_data = var.create_hello_world ? local.hello_word_script : ""
+  user_data = var.create_hello_world ? format(local.hello_word_script, count.index) : ""
 
   tags = {
     Name = "${var.friendly_name_prefix}-tfe-server-${count.index}"
