@@ -49,6 +49,7 @@ resource "aws_network_interface" "bastion" {
 resource "aws_instance" "bastion" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 
   network_interface {
     network_interface_id = aws_network_interface.bastion.id
@@ -97,6 +98,7 @@ resource "aws_instance" "tfe" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "m5.xlarge"
   key_name      = aws_key_pair.main.key_name
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 
   network_interface {
     network_interface_id = aws_network_interface.tfe[count.index].id
