@@ -49,7 +49,7 @@ resource "aws_network_interface" "bastion" {
 resource "aws_instance" "bastion" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
-  availability_zone = data.aws_availability_zones.available.names[count.index]
+  availability_zone = data.aws_availability_zones.available.names[0]
 
   network_interface {
     network_interface_id = aws_network_interface.bastion.id
