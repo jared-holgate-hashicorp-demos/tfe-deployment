@@ -5,7 +5,7 @@ variable "friendly_name_prefix" {
 }
 
 variable "create_hello_world" {
-    type        = boolean
+    type        = bool
     description = "(Optional) Create a Hello World application."
-    default     = false
+    default     = true
 }
