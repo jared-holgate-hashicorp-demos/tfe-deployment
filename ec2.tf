@@ -30,6 +30,10 @@ resource "aws_eip" "bastion" {
   instance                  = aws_instance.bastion.id
   associate_with_private_ip = "10.0.0.101"
   depends_on                = [aws_internet_gateway.main]
+
+  tags = {
+    Name = "${var.friendly_name_prefix}-bastion-eip"
+  }
 }
 
 resource "aws_network_interface" "bastion" {
@@ -66,8 +70,8 @@ EOF
 
 resource "aws_network_interface" "tfe" {
   count           = 2
-  subnet_id       = aws_subnet.private[0].id
-  private_ips     = ["10.0.100.10${count.index}"]
+  subnet_id       = aws_subnet.private[index.count].id
+  private_ips     = ["10.0.${count.index + 100}}.10${count.index}"]
   security_groups = [aws_security_group.tfe.id]
 
   tags = {
@@ -104,4 +108,21 @@ resource "aws_instance" "tfe" {
   tags = {
     Name = "${var.friendly_name_prefix}-tfe-server-${count.index}"
   }
+}
+
+resource "aws_ebs_volume" "tfe" {
+  count             = 2
+  availability_zone = data.aws_availability_zones.available.zone_ids[count.index]
+  size              = 200
+
+  tags = {
+    Name = "${var.friendly_name_prefix}-tfe-ebs-${count.index}"
+  }
+}
+
+resource "aws_volume_attachment" "tfe" {
+  count       = 2
+  device_name = "/opt/tfe"
+  volume_id   = aws_ebs_volume.tfe[count.index].id
+  instance_id = aws_instance.tfe[count.index].id
 }
