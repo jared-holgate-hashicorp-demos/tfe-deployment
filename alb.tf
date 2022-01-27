@@ -73,3 +73,19 @@ resource "aws_lb_listener" "tfe" {
     target_group_arn = aws_lb_target_group.tfe.arn
   }
 }
+
+resource "aws_lb_listener" "http_redirect" {
+  load_balancer_arn = aws_lb.tfe.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}

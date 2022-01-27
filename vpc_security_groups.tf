@@ -22,7 +22,7 @@ resource "aws_security_group" "bastion" {
 }
 
 locals {
-    public_subnet_cidrs = [for index in range(3) : "10.0.${index}.0/24"]
+  public_subnet_cidrs = [for index in range(3) : "10.0.${index}.0/24"]
 }
 
 resource "aws_security_group" "tfe" {
@@ -70,6 +70,13 @@ resource "aws_security_group" "alb" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 80
+    to_port     = 80
     cidr_blocks = ["0.0.0.0/0"]
   }
 
