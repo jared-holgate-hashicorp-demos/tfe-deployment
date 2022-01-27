@@ -72,9 +72,9 @@ EOF
 locals {
   hello_word_script = <<EOF
 #!/bin/bash
-yum update -y
-yum install httpd -y
-service httpd start
+apt update -y
+apt install apache2 -y
+systemctl start apache2.service
 cd /var/www/html
 echo "<html><body><h1>Hello World - My IP is" > index.html 
 curl http://169.254.169.254/latest/meta-data/public-ipv4 >> index.html
