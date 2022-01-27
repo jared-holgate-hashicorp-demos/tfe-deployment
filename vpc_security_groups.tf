@@ -92,14 +92,14 @@ resource "aws_security_group" "alb" {
     protocol    = "tcp"
     from_port   = 443
     to_port     = 443
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = length(var.tfe_ip_restrictions) == 0 ? ["0.0.0.0/0"] : var.tfe_ip_restrictions
   }
 
   ingress {
     protocol    = "tcp"
     from_port   = 8800
     to_port     = 8800
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = length(var.replicated_ip_restrictions) == 0 ? ["0.0.0.0/0"] : var.replicated_ip_restrictions
   }
 
   tags = {

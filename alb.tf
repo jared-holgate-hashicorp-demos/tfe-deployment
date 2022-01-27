@@ -47,11 +47,11 @@ resource "aws_lb_target_group_attachment" "replicated" {
 }
 
 resource "aws_acm_certificate" "tfe" {
-  domain_name       = "tfe.hashicorpdemo.net"
+  domain_name       = "${var.tfe_sub_domain}.${var.root_domain}"
   validation_method = "DNS"
 
   tags = {
-    Name = "tfe.hashicorpdemo.net"
+    Name = "${var.tfe_sub_domain}.${var.root_domain}"
   }
 
   lifecycle {
@@ -60,11 +60,11 @@ resource "aws_acm_certificate" "tfe" {
 }
 
 resource "aws_acm_certificate" "replicated" {
-  domain_name       = "replicated.hashicorpdemo.net"
+  domain_name       = "${var.replicated_sub_domain}.${var.root_domain}"
   validation_method = "DNS"
 
   tags = {
-    Environment = "replicated.hashicorpdemo.net"
+    Environment = "${var.replicated_sub_domain}.${var.root_domain}"
   }
 
   lifecycle {
@@ -73,7 +73,7 @@ resource "aws_acm_certificate" "replicated" {
 }
 
 data "cloudflare_zone" "tfe" {
-  name = "hashicorpdemo.net"
+  name = var.root_domain
 }
 
 resource "cloudflare_record" "tfe_cert" {
@@ -86,7 +86,7 @@ resource "cloudflare_record" "tfe_cert" {
 
 resource "cloudflare_record" "tfe" {
   zone_id = data.cloudflare_zone.tfe.id
-  name    = "tfe.hashicorpdemo.net"
+  name    = "${var.tfe_sub_domain}.${var.root_domain}"
   value   = aws_lb.tfe.dns_name
   type    = "CNAME"
   ttl     = 3600
@@ -102,7 +102,7 @@ resource "cloudflare_record" "replicated_cert" {
 
 resource "cloudflare_record" "replicated" {
   zone_id = data.cloudflare_zone.tfe.id
-  name    = "replicated.hashicorpdemo.net"
+  name    = "${var.replicated_sub_domain}.${var.root_domain}"
   value   = aws_lb.tfe.dns_name
   type    = "CNAME"
   ttl     = 3600
