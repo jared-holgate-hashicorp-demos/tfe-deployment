@@ -135,6 +135,17 @@ $tfeConfigFile="${local.tfe_config_automated_mounted_disk_tfe}"
 echo "$tfeConfigFile" > /etc/tfe_settings.json
 $replicatedConfigFile="${local.tfe_config_automated_mounted_disk_replicated}"
 echo "$replicatedConfigFile" > /etc/replicated.conf
+${local.tfe_script_install}
+while ! curl -ksfS --connect-timeout 5 https://${var.tfe_sub_domain}.${var.root_domain}/_health_check; do
+    sleep 5
+done
+initial_token=$(replicated admin retrieve-iact | tr -d '\r')
+curl \
+  --header "Content-Type: application/json" \
+  --request POST \
+  --data '{ "username": "admin", "email": "demo@hashicorp.com", "password": "${random_password.tfe.result}"
+}' \
+  "https://tfe.company.com/admin/initial-admin-user?token=$initial_token"
 EOF
 
   tfe_config_automated_mounted_disk_replicated = <<-EOF
