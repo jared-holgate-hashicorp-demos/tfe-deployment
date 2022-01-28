@@ -1,12 +1,12 @@
 locals {
   tfe_script_automated_mounted_disk = <<-EOF
 echo "Configuring TFE with Mounted Disk"
-$tfeConfigFile=$(cat <<-END
+tfeConfigFile=$(cat <<-END
 ${local.tfe_config_automated_mounted_disk_tfe}
 END
 )
 echo "$tfeConfigFile" > /etc/tfe_settings.json
-$replicatedConfigFile=$(cat <<-END
+replicatedConfigFile=$(cat <<-END
 ${local.tfe_config_automated_mounted_disk_replicated}"
 END
 )
