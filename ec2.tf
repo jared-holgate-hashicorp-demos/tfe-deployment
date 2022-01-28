@@ -69,6 +69,28 @@ EOF
   }
 }
 
+resource "random_password" "replicated" {
+  length     = 20
+  min_lower  = 1
+  min_upper  = 1
+  min_number = 1
+  number     = true
+  lower      = true
+  upper      = true
+  special    = false
+}
+
+resource "random_password" "tfe" {
+  length     = 20
+  min_lower  = 1
+  min_upper  = 1
+  min_number = 1
+  number     = true
+  lower      = true
+  upper      = true
+  special    = false
+}
+
 locals {
   hello_word_script = <<EOF
 #!/bin/bash
@@ -102,15 +124,48 @@ EOF
   tfe_script_get_license = <<-EOF
 echo "Get TFE Licnese"
 tfeLicense="${var.tfe_license}"
-echo "$tfeLicense" > license.txt
-cat license.txt | base64 --decode > license.tar.gz
-tar -xvf license.tar.gz
+echo "$tfeLicense" > /etc/license.txt
+cat /etc/license.txt | base64 --decode > /etc/license.tar.gz
+tar -xvf /etc/license.tar.gz
 EOF 
 
   tfe_script_automated_mounted_disk = <<-EOF
 echo "Configuring TFE with Mounted Disk"
+$tfeConfigFile="${local.tfe_config_automated_mounted_disk_tfe}"
+echo "$tfeConfigFile" > /etc/tfe_settings.json
+$replicatedConfigFile="${local.tfe_config_automated_mounted_disk_replicated}"
+echo "$replicatedConfigFile" > /etc/replicated.conf
+EOF
 
+  tfe_config_automated_mounted_disk_replicated = <<-EOF
+{
+    "DaemonAuthenticationType":     "password",
+    "DaemonAuthenticationPassword": "${random_password.replicated.result}",
+    "TlsBootstrapType":             "self-signed",
+    "BypassPreflightChecks":        true,
+    "ImportSettingsFrom":           "/etc/settings.json",
+    "LicenseFileLocation":          "/etc/license.rli"
+}
+EOF
 
+  tfe_config_automated_mounted_disk_tfe = <<-EOF
+{
+    "disk_path": {
+        "value": "/tfe"
+    },
+    "enc_password": {
+        "value": "${random_password.replicated.result}"
+    },
+    "hostname": {
+        "value": "tfe.hashicorpdemo.net"
+    },
+    "installation_type": {
+        "value": "production"
+    },
+    "production_type": {
+        "value": "disk"
+    }
+}
 EOF
 
   tfe_script_automated_external_services = <<-EOF
@@ -127,9 +182,9 @@ EOF
 
   final_tfe_script = (var.install_type == "apache_hello_world" ? local.hello_word_script :
     (var.install_type == "tfe_manual" ? "${local.tfe_script_base}${local.tfe_script_install}" :
-      (var.install_type == "tfe_automated_mounted_disk" ? "${local.tfe_script_base}${local.tfe_script_install}${local.tfe_script_get_license}${local.tfe_script_automated_mounted_disk}" :
-        (var.install_type == "tfe_automated_external_services" ? "${local.tfe_script_base}${local.tfe_script_install}${local.tfe_script_get_license}${local.tfe_script_automated_external_services}" :
-  (var.install_type == "tfe_automated_active_active" ? "${local.tfe_script_base}${local.tfe_script_install}${local.tfe_script_get_license}${local.tfe_script_automated_active_active}" : "")))))
+      (var.install_type == "tfe_automated_mounted_disk" ? "${local.tfe_script_base}${local.tfe_script_get_license}${local.tfe_script_automated_mounted_disk}${local.tfe_script_install}" :
+        (var.install_type == "tfe_automated_external_services" ? "${local.tfe_script_base}${local.tfe_script_get_license}${local.tfe_script_automated_external_services}${local.tfe_script_install}" :
+  (var.install_type == "tfe_automated_active_active" ? "${local.tfe_script_base}${local.tfe_script_get_license}${local.tfe_script_automated_active_active}${local.tfe_script_install}" : "")))))
 }
 
 resource "aws_network_interface" "tfe" {
