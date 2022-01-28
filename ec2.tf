@@ -83,6 +83,14 @@ EOF
 #!/bin/bash
 apt update -y
 
+echo "Mount TFE Volume"
+mkfs -t xfs /dev/nvme1n1
+mkdir /tfe
+mount /dev/nvme1n1 /tfe
+
+mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
+echo "UUID=$mountId  /tfe  xfs  defaults,nofail  0  2" >> /etc/fstab
+
 echo "Installing TFE"
 curl https://install.terraform.io/ptfe/stable | sudo bash
 EOF 
