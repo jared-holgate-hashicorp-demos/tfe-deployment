@@ -86,7 +86,7 @@ apt update -y
 echo "Mount TFE Volume"
 mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
 
-until [ -z "$mountId" ]; do
+until [ ! -z "$mountId" ]; do
   sleep 5
   mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
 done
