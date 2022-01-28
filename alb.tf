@@ -12,8 +12,8 @@ resource "aws_lb" "tfe" {
 
 resource "aws_lb_target_group" "tfe" {
   name     = "${var.friendly_name_prefix}-tfe-tg"
-  port     = var.create_hello_world ? 80 : 443
-  protocol = var.create_hello_world ? "HTTP" : "HTTPS"
+  port     = var.install_type == "apache_hello_world" ? 80 : 443
+  protocol = var.install_type == "apache_hello_world" ? "HTTP" : "HTTPS"
   vpc_id   = aws_vpc.main.id
 
   tags = {
@@ -33,10 +33,10 @@ resource "aws_lb_target_group" "replicated" {
 }
 
 resource "aws_lb_target_group_attachment" "tfe" {
-  count            = var.create_hello_world ? 2 : 1
+  count            = var.install_type == "apache_hello_world" ? 2 : 1
   target_group_arn = aws_lb_target_group.tfe.arn
   target_id        = aws_instance.tfe[count.index].id
-  port             = var.create_hello_world ? 80 : 443
+  port             = var.install_type == "apache_hello_world" ? 80 : 443
 }
 
 resource "aws_lb_target_group_attachment" "replicated" {

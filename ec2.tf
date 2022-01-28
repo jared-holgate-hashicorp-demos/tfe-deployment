@@ -79,32 +79,57 @@ cd /var/www/html
 echo "<html><body><h1>Hello World - Server %s</h1></body></html>" > index.html 
 EOF 
 
-  tfe_script = <<-EOF
+  tfe_script_base = <<-EOF
 #!/bin/bash
 apt update -y
 
+echo "Mount TFE Volume"
+mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
+until [ ! -z "$mountId" ]; do
+  sleep 5
+  mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
+done
+mkdir /tfe
+mount /dev/nvme1n1 /tfe
+echo "UUID=$mountId  /tfe  xfs  defaults,nofail  0  2" >> /etc/fstab
+EOF 
+
+  tfe_script_install = <<-EOF
+echo "Installing TFE"
+curl https://install.terraform.io/ptfe/stable | sudo bash
+EOF
+
+  tfe_script_get_license = <<-EOF
 echo "Get TFE Licnese"
 tfeLicense="${var.tfe_license}"
 echo "$tfeLicense" > license.txt
 cat license.txt | base64 --decode > license.tar.gz
 tar -xvf license.tar.gz
-
-echo "Mount TFE Volume"
-mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
-
-until [ ! -z "$mountId" ]; do
-  sleep 5
-  mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
-done
-
-mkdir /tfe
-mount /dev/nvme1n1 /tfe
-
-echo "UUID=$mountId  /tfe  xfs  defaults,nofail  0  2" >> /etc/fstab
-
-echo "Installing TFE"
-curl https://install.terraform.io/ptfe/stable | sudo bash
 EOF 
+
+  tfe_script_automated_mounted_disk = <<-EOF
+echo "Configuring TFE with Mounted Disk"
+
+
+EOF
+
+  tfe_script_automated_external_services = <<-EOF
+echo "Configuring TFE with External Services"
+
+
+EOF
+
+  tfe_script_automated_active_active = <<-EOF
+echo "Configuring TFE with Active/Active" 
+
+
+EOF
+
+  final_tfe_script = var.install_type == ("apache_hello_world" ? local.hello_word_script :
+    (var.install_type == "tfe_manual" ? "${local.tfe_script_base}${local.tfe_script_install}" :
+      (var.install_type == "tfe_automated_mounted_disk" ? "${local.tfe_script_base}${local.tfe_script_install}${local.tfe_script_get_license}${local.tfe_script_automated_mounted_disk}" :
+        (var.install_type == "tfe_automated_external_services" ? "${local.tfe_script_base}${local.tfe_script_install}${local.tfe_script_get_license}${local.tfe_script_automated_external_services}" :
+  (var.install_type == "tfe_automated_active_active" ? "${local.tfe_script_base}${local.tfe_script_install}${local.tfe_script_get_license}${local.tfe_script_automated_active_active}" : "")))))
 }
 
 resource "aws_network_interface" "tfe" {
@@ -137,7 +162,7 @@ resource "aws_instance" "tfe" {
     }
   }
 
-  user_data = var.create_hello_world ? format(local.hello_word_script, count.index) : local.tfe_script
+  user_data = local.final_tfe_script
 
   tags = {
     Name = "${var.friendly_name_prefix}-tfe-server-${count.index}"
