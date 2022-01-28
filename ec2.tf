@@ -125,7 +125,7 @@ echo "Configuring TFE with Active/Active"
 
 EOF
 
-  final_tfe_script = var.install_type == ("apache_hello_world" ? local.hello_word_script :
+  final_tfe_script = (var.install_type == "apache_hello_world" ? local.hello_word_script :
     (var.install_type == "tfe_manual" ? "${local.tfe_script_base}${local.tfe_script_install}" :
       (var.install_type == "tfe_automated_mounted_disk" ? "${local.tfe_script_base}${local.tfe_script_install}${local.tfe_script_get_license}${local.tfe_script_automated_mounted_disk}" :
         (var.install_type == "tfe_automated_external_services" ? "${local.tfe_script_base}${local.tfe_script_install}${local.tfe_script_get_license}${local.tfe_script_automated_external_services}" :
