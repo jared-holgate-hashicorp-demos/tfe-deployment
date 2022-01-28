@@ -70,25 +70,25 @@ EOF
 }
 
 resource "random_password" "replicated" {
-  length     = 20
-  min_lower  = 1
-  min_upper  = 1
-  min_number = 1
-  number     = true
-  lower      = true
-  upper      = true
-  special    = false
+  length      = 20
+  min_lower   = 1
+  min_upper   = 1
+  min_numeric = 1
+  number      = true
+  lower       = true
+  upper       = true
+  special     = false
 }
 
 resource "random_password" "tfe" {
-  length     = 20
-  min_lower  = 1
-  min_upper  = 1
-  min_number = 1
-  number     = true
-  lower      = true
-  upper      = true
-  special    = false
+  length      = 20
+  min_lower   = 1
+  min_upper   = 1
+  min_numeric = 1
+  number      = true
+  lower       = true
+  upper       = true
+  special     = false
 }
 
 locals {
