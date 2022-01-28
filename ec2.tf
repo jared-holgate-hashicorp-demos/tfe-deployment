@@ -118,17 +118,26 @@ resource "aws_instance" "tfe" {
     }
   }
 
-  ebs_block_device {
-    device_name = "/dev/sdh"
-    volume_size = 200
-    tags = {
-      Name = "${var.friendly_name_prefix}-tfe-server-ebs-tfe-${count.index}"
-    }
-  }
-
   user_data = var.create_hello_world ? format(local.hello_word_script, count.index) : local.tfe_script
 
   tags = {
     Name = "${var.friendly_name_prefix}-tfe-server-${count.index}"
   }
+}
+
+resource "aws_ebs_volume" "tfe" {
+  count             = 2
+  availability_zone = data.aws_availability_zones.available.names[count.index]
+  size              = 200
+
+  tags = {
+    Name = "${var.friendly_name_prefix}-tfe-server-ebs-tfe-${count.index}"
+  }
+}
+
+resource "aws_volume_attachment" "tfe" {
+  count       = 2
+  device_name = "/dev/sdh"
+  volume_id   = aws_ebs_volume.tfe[count.index].id
+  instance_id = aws_instance.tfe[count.index].id
 }
