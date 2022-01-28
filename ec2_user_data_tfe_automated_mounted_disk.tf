@@ -1,9 +1,15 @@
 locals {
   tfe_script_automated_mounted_disk = <<-EOF
 echo "Configuring TFE with Mounted Disk"
-$tfeConfigFile="${local.tfe_config_automated_mounted_disk_tfe}"
+$tfeConfigFile=$(cat <<-END
+${local.tfe_config_automated_mounted_disk_tfe}
+END
+)
 echo "$tfeConfigFile" > /etc/tfe_settings.json
-$replicatedConfigFile="${local.tfe_config_automated_mounted_disk_replicated}"
+$replicatedConfigFile=$(cat <<-END
+${local.tfe_config_automated_mounted_disk_replicated}"
+END
+)
 echo "$replicatedConfigFile" > /etc/replicated.conf
 ${local.tfe_script_install}
 while ! curl -ksfS --connect-timeout 5 https://${var.tfe_sub_domain}.${var.root_domain}/_health_check; do
