@@ -79,16 +79,21 @@ cd /var/www/html
 echo "<html><body><h1>Hello World - Server %s</h1></body></html>" > index.html 
 EOF 
 
-  tfe_script = <<EOF
+  tfe_script = <<-EOF
 #!/bin/bash
 apt update -y
 
 echo "Mount TFE Volume"
-mkfs -t xfs /dev/nvme1n1
+mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
+
+until [ -z "$mountId" ]; do
+  sleep 5
+  mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
+done
+
 mkdir /tfe
 mount /dev/nvme1n1 /tfe
 
-mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
 echo "UUID=$mountId  /tfe  xfs  defaults,nofail  0  2" >> /etc/fstab
 
 echo "Installing TFE"
