@@ -40,3 +40,8 @@ variable "create_hello_world" {
   default     = false
 }
 
+variable "tfe_license" {
+    type        = string
+    description = "(Optional) The license for the TFE application."
+    default     = ""
+}
