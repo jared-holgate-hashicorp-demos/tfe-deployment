@@ -1,3 +1,25 @@
+resource "random_password" "replicated" {
+  length      = 20
+  min_lower   = 1
+  min_upper   = 1
+  min_numeric = 1
+  number      = true
+  lower       = true
+  upper       = true
+  special     = false
+}
+
+resource "random_password" "tfe" {
+  length      = 20
+  min_lower   = 1
+  min_upper   = 1
+  min_numeric = 1
+  number      = true
+  lower       = true
+  upper       = true
+  special     = false
+}
+
 locals {
   tfe_script_base = <<-EOF
 #!/bin/bash
@@ -26,4 +48,10 @@ echo "$tfeLicense" > /etc/license.txt
 cat /etc/license.txt | base64 --decode > /etc/license.tar.gz
 tar -xvf /etc/license.tar.gz
 EOF 
+
+  final_tfe_script = (var.install_type == "apache_hello_world" ? local.hello_word_script :
+    (var.install_type == "tfe_manual" ? "${local.tfe_script_base}${local.tfe_script_install}" :
+      (var.install_type == "tfe_automated_mounted_disk" ? "${local.tfe_script_base}${local.tfe_script_get_license}${local.tfe_script_automated_mounted_disk}${local.tfe_script_install}" :
+        (var.install_type == "tfe_automated_external_services" ? "${local.tfe_script_base}${local.tfe_script_get_license}${local.tfe_script_automated_external_services}${local.tfe_script_install}" :
+  (var.install_type == "tfe_automated_active_active" ? "${local.tfe_script_base}${local.tfe_script_get_license}${local.tfe_script_automated_active_active}${local.tfe_script_install}" : "")))))
 }
