@@ -86,7 +86,8 @@ apt update -y
 echo "Get TFE Licnese"
 tfeLicense="${var.tfe_license}"
 echo "$tfeLicense" > license.txt
-xxd -r < license.txt > license.rli
+cat license.txt | base64 --decode > license.tar.gz
+tar -xvf license.tar.gz
 
 echo "Mount TFE Volume"
 mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
