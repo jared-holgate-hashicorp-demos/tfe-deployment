@@ -40,7 +40,7 @@ variable "install_type" {
   default     = "tfe_automated_mounted_disk"
   validation {
     condition     = contains(["apache_hello_world", "tfe_manual", "tfe_automated_mounted_disk", "tfe_automated_external_services", "tfe_automated_active_active"], var.install_type)
-    error_message = "Valid values for install_type: test_variable are (apache_hello_world, tfe_manual, tfe_automated_mounted_disk, tfe_automated_external_services, tfe_automated_active_active)"
+    error_message = "Valid values for install_type: test_variable are apache_hello_world, tfe_manual, tfe_automated_mounted_disk, tfe_automated_external_services and tfe_automated_active_active."
   }
 }
 
