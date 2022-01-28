@@ -47,6 +47,8 @@ tfeLicense="${var.tfe_license}"
 echo "$tfeLicense" > /etc/license.txt
 cat /etc/license.txt | base64 --decode > /etc/license.tar.gz
 tar -xvf /etc/license.tar.gz -C /etc
+rm /etc/license.txt
+rm /etc/license.tar.gz
 EOF 
 
   final_tfe_script = (var.install_type == "apache_hello_world" ? local.hello_word_script :
