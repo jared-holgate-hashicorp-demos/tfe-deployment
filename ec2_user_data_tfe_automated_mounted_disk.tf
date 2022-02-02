@@ -8,7 +8,7 @@ locals {
     echo "$tfeConfigFile" > /etc/tfe_settings.json
 
     replicatedConfigFile=$(cat <<-END
-    ${local.tfe_config_automated_mounted_disk_replicated}"
+    ${local.tfe_config_automated_mounted_disk_replicated}
     END
     )
     echo "$replicatedConfigFile" > /etc/replicated.conf
