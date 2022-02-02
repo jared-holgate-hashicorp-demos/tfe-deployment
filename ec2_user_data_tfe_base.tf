@@ -77,7 +77,7 @@ EOF
     done
 
     initial_token=$(replicated admin retrieve-iact | tr -d '\r')
-    curl \
+    curl -v \
       --header "Content-Type: application/json" \
       --request POST \
       --data '{ "username": "admin", "email": "demo@hashicorp.com", "password": "${random_password.tfe.result}" }' \
