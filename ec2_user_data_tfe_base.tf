@@ -35,7 +35,7 @@ until [ ! -z "$volumeData" ]; do
 done
 
 echo "Found the volume, formatting it"
-mkfs -t xfs /dev/nvme1n1
+mkfs -t xfs -f /dev/nvme1n1
 
 mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
 until [ ! -z "$mountId" ]; do
