@@ -26,14 +26,31 @@ locals {
 apt update -y
 
 echo "Mount TFE Volume"
+
+volumeData=$(lsblk | grep nvme1n1)
+until [ ! -z "$volumeData" ]; do
+  echo "Looking for volume..."
+  sleep 5
+  volumeData=$(lsblk | grep nvme1n1)
+done
+
+echo "Found the volume, formatting it"
+mkfs -t xfs /dev/nvme1n1
+
 mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
 until [ ! -z "$mountId" ]; do
+  echo "Looking for mount id..."
   sleep 5
   mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
 done
+
+echo "Found mount id, mounting it and adding to fstab"
+
 mkdir /tfe
 mount /dev/nvme1n1 /tfe
 echo "UUID=$mountId  /tfe  xfs  defaults,nofail  0  2" >> /etc/fstab
+
+eacho "Finished mounting tfe volume"
 EOF 
 
   tfe_script_install = <<-EOF
