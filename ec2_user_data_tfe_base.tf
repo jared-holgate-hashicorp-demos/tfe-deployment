@@ -76,17 +76,9 @@ EOF
         sleep 5
     done
 
-    echo $(replicated admin retrieve-iact)
-
-    initialToken=$(/usr/local/bin/replicated admin retrieve-iact | tr -d '\r')
+    initialToken=$(replicated admin --tty=0 retrieve-iact | tr -d '\r')
     echo "Initial Token: $initialToken"
-    until [ ! -z "$initialToken" ]; do
-      echo "Looking for initial token..."
-      echo $(replicated admin retrieve-iact)
-      sleep 5
-      initialToken=$(/usr/local/bin/replicated admin retrieve-iact | tr -d '\r')
-    done
-
+    
     curl -v --header "Content-Type: application/json" --request POST --data '{ "username": "admin", "email": "demo@hashicorp.com", "password": "${random_password.tfe.result}" }' https://${var.tfe_sub_domain}.${var.root_domain}/admin/initial-admin-user?token=$initialToken
 EOF
 
