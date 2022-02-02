@@ -77,11 +77,7 @@ EOF
     done
 
     initial_token=$(replicated admin retrieve-iact | tr -d '\r')
-    curl -v \
-      --header "Content-Type: application/json" \
-      --request POST \
-      --data '{ "username": "admin", "email": "demo@hashicorp.com", "password": "${random_password.tfe.result}" }' \
-      https://${var.tfe_sub_domain}.${var.root_domain}/admin/initial-admin-user?token=$initial_token
+    curl -v --header "Content-Type: application/json" --request POST --data '{ "username": "admin", "email": "demo@hashicorp.com", "password": "${random_password.tfe.result}" }' https://${var.tfe_sub_domain}.${var.root_domain}/admin/initial-admin-user?token=$initial_token
 EOF
 
   final_tfe_script = (var.install_type == "apache_hello_world" ? local.hello_word_script :
