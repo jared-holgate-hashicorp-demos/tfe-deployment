@@ -81,7 +81,7 @@ resource "cloudflare_record" "tfe_cert" {
   name    = tolist(aws_acm_certificate.tfe.domain_validation_options)[0].resource_record_name
   value   = trimsuffix(tolist(aws_acm_certificate.tfe.domain_validation_options)[0].resource_record_value, ".")
   type    = tolist(aws_acm_certificate.tfe.domain_validation_options)[0].resource_record_type
-  ttl     = 3600
+  ttl     = 120
 }
 
 resource "cloudflare_record" "tfe" {
@@ -89,7 +89,7 @@ resource "cloudflare_record" "tfe" {
   name    = "${var.tfe_sub_domain}.${var.root_domain}"
   value   = aws_lb.tfe.dns_name
   type    = "CNAME"
-  ttl     = 3600
+  ttl     = 120
 }
 
 resource "cloudflare_record" "replicated_cert" {
