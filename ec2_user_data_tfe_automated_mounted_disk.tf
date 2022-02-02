@@ -19,8 +19,7 @@ initial_token=$(replicated admin retrieve-iact | tr -d '\r')
 curl \
   --header "Content-Type: application/json" \
   --request POST \
-  --data '{ "username": "admin", "email": "demo@hashicorp.com", "password": "${random_password.tfe.result}"
-}' \
+  --data '{ "username": "admin", "email": "demo@hashicorp.com", "password": "${random_password.tfe.result}" }' \
   "https://${var.tfe_sub_domain}.${var.root_domain}/admin/initial-admin-user?token=$initial_token"
 EOF
 
@@ -30,7 +29,7 @@ EOF
     "DaemonAuthenticationPassword": "${random_password.replicated.result}",
     "TlsBootstrapType":             "self-signed",
     "BypassPreflightChecks":        true,
-    "ImportSettingsFrom":           "/etc/settings.json",
+    "ImportSettingsFrom":           "/etc/tfe_settings.json",
     "LicenseFileLocation":          "/etc/license.rli"
 }
 EOF
