@@ -29,7 +29,6 @@ resource "aws_eip" "bastion" {
 
   instance                  = aws_instance.bastion.id
   associate_with_private_ip = "10.0.0.101"
-  depends_on                = [aws_internet_gateway.main]
 
   tags = {
     Name = "${var.friendly_name_prefix}-bastion-eip"
@@ -40,6 +39,7 @@ resource "aws_network_interface" "bastion" {
   subnet_id       = aws_subnet.public[0].id
   private_ips     = ["10.0.0.101"]
   security_groups = [aws_security_group.bastion.id]
+  depends_on = [aws_route_table.internet]
 
   tags = {
     Name = "${var.friendly_name_prefix}-bastion-network-interface"
@@ -74,6 +74,7 @@ resource "aws_network_interface" "tfe" {
   subnet_id       = aws_subnet.private[count.index].id
   private_ips     = ["10.0.${count.index + 100}.10${count.index}"]
   security_groups = [aws_security_group.tfe.id]
+  depends_on = [aws_route_table.private]
 
   tags = {
     Name = "${var.friendly_name_prefix}-tfe-network-interface-${count.index}"
