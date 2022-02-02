@@ -13,8 +13,11 @@ END
 echo "$replicatedConfigFile" > /etc/replicated.conf
 ${local.tfe_script_install}
 while ! curl -ksfS --connect-timeout 5 https://${var.tfe_sub_domain}.${var.root_domain}/_health_check; do
+    echo "Waiting for TFE to be ready"
     sleep 5
 done
+
+echo "Creating default TFE login"
 initial_token=$(replicated admin retrieve-iact | tr -d '\r')
 curl \
   --header "Content-Type: application/json" \
