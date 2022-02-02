@@ -23,7 +23,7 @@ curl \
   --header "Content-Type: application/json" \
   --request POST \
   --data '{ "username": "admin", "email": "demo@hashicorp.com", "password": "${random_password.tfe.result}" }' \
-  "https://${var.tfe_sub_domain}.${var.root_domain}/admin/initial-admin-user?token=$initial_token"
+  https://${var.tfe_sub_domain}.${var.root_domain}/admin/initial-admin-user?token=$initial_token
 EOF
 
   tfe_config_automated_mounted_disk_replicated = <<-EOF
