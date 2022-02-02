@@ -76,10 +76,13 @@ EOF
         sleep 5
     done
 
+    echo $(replicated admin retrieve-iact)
+
     initialToken=$(/usr/local/bin/replicated admin retrieve-iact | tr -d '\r')
     echo "Initial Token: $initialToken"
     until [ ! -z "$initialToken" ]; do
       echo "Looking for initial token..."
+      echo $(replicated admin retrieve-iact)
       sleep 5
       initialToken=$(/usr/local/bin/replicated admin retrieve-iact | tr -d '\r')
     done
