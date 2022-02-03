@@ -26,7 +26,7 @@ data "aws_ami" "ubuntu" {
 
 locals {
   bastion_ip = cidrhost(var.network_public_subnet_cidrs[0], 101)
-  tfe_ips = [ for i, subnet in var.network_private_subnet_cidrs : cidrhost(subnet, i + 100) ]
+  tfe_ips = [ for i, subnet in var.network_private_subnet_cidrs : cidrhost(subnet, i + 101) ]
 }
 
 resource "aws_eip" "bastion" {
@@ -82,7 +82,7 @@ resource "aws_network_interface" "tfe" {
   depends_on      = [aws_route_table.private]
 
   tags = {
-    Name = "${var.friendly_name_prefix}-tfe-network-interface-${count.index}"
+    Name = "${var.friendly_name_prefix}-tfe-network-interface-${count.index + 1}"
   }
 }
 
@@ -101,14 +101,14 @@ resource "aws_instance" "tfe" {
   root_block_device {
     volume_size = 100
     tags = {
-      Name = "${var.friendly_name_prefix}-tfe-server-ebs-root-${count.index}"
+      Name = "${var.friendly_name_prefix}-tfe-server-ebs-root-${count.index + 1}"
     }
   }
 
   user_data = (count.index == 0 && var.install_type != "tfe_manual" && var.install_type != "apache_hello_world") ? "${local.final_tfe_script}${local.tfe_script_setup_admin_user}" : local.final_tfe_script
 
   tags = {
-    Name = "${var.friendly_name_prefix}-tfe-server-${count.index}"
+    Name = "${var.friendly_name_prefix}-tfe-server-${count.index + 1}"
   }
 }
 
@@ -118,7 +118,7 @@ resource "aws_ebs_volume" "tfe" {
   size              = 200
 
   tags = {
-    Name = "${var.friendly_name_prefix}-tfe-server-ebs-tfe-${count.index}"
+    Name = "${var.friendly_name_prefix}-tfe-server-ebs-tfe-${count.index + 1}"
   }
 }
 
