@@ -8,6 +8,10 @@ resource "aws_iam_instance_profile" "tfe" {
   role        = aws_iam_role.instance_role.name
 }
 
+resource "aws_iam_service_linked_role" "elasticbeanstalk" {
+  aws_service_name = "ec2.amazonaws.com"
+}
+
 resource "aws_iam_role" "instance_role" {
   name_prefix        = "${var.friendly_name_prefix}-tfe"
   assume_role_policy = data.aws_iam_policy_document.instance_role.json
@@ -64,7 +68,7 @@ data "aws_iam_policy_document" "tfe_data" {
     ]
     effect = "Allow"
     principals {
-      identifiers = [aws_iam_instance_profile.tfe.arn]
+      identifiers = [aws_iam_role.instance_role.arn]
       type        = "AWS"
     }
     resources = [aws_s3_bucket.tfe_data_bucket.arn]
@@ -79,7 +83,7 @@ data "aws_iam_policy_document" "tfe_data" {
     ]
     effect = "Allow"
     principals {
-      identifiers = [aws_iam_instance_profile.tfe.arn]
+      identifiers = [aws_iam_role.instance_role.arn]
       type        = "AWS"
     }
     resources = ["${aws_s3_bucket.tfe_data_bucket.arn}/*"]

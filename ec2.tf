@@ -26,7 +26,7 @@ data "aws_ami" "ubuntu" {
 
 locals {
   bastion_ip = cidrhost(var.network_public_subnet_cidrs[0], 101)
-  tfe_ips = [ for i, subnet in var.network_private_subnet_cidrs : cidrhost(subnet, i + 101) ]
+  tfe_ips    = [for i, subnet in var.network_private_subnet_cidrs : cidrhost(subnet, i + 101)]
 }
 
 resource "aws_eip" "bastion" {
@@ -87,11 +87,11 @@ resource "aws_network_interface" "tfe" {
 }
 
 resource "aws_instance" "tfe" {
-  count             = 2
-  ami               = data.aws_ami.ubuntu.id
-  instance_type     = "m5.xlarge"
-  key_name          = aws_key_pair.main.key_name
-  availability_zone = data.aws_availability_zones.available.names[count.index]
+  count                = 2
+  ami                  = data.aws_ami.ubuntu.id
+  instance_type        = "m5.xlarge"
+  key_name             = aws_key_pair.main.key_name
+  availability_zone    = data.aws_availability_zones.available.names[count.index]
   iam_instance_profile = aws_iam_instance_profile.tfe.id
 
   network_interface {
