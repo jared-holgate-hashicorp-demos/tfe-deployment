@@ -22,7 +22,8 @@ resource "aws_security_group" "bastion" {
 }
 
 locals {
-  public_subnet_cidrs = [for index in range(3) : "10.0.${index}.0/24"]
+  public_subnet_cidrs  = [for index in range(3) : "10.0.${index}.0/24"]
+  private_subnet_cidrs = [for index in range(3) : "10.0.${100 + index}.0/24"]
 }
 
 resource "aws_security_group" "tfe" {
@@ -104,5 +105,24 @@ resource "aws_security_group" "alb" {
 
   tags = {
     Name = "${var.friendly_name_prefix}-alb-security-group"
+  }
+}
+
+resource "aws_security_group" "rds" {
+  name   = "${var.friendly_name_prefix}-rds-security-group"
+  vpc_id = aws_vpc.main.id
+
+  egress {
+    protocol    = "tcp"
+    from_port   = 5432
+    to_port     = 5432
+    cidr_blocks = local.private_subnet_cidrs
+  }
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 5432
+    to_port     = 5432
+    cidr_blocks = local.private_subnet_cidrs
   }
 }
