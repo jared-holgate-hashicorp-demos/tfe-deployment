@@ -36,7 +36,7 @@ resource "aws_db_instance" "postgresql" {
   auto_minor_version_upgrade  = true
   backup_retention_period     = 0
   backup_window               = null
-  db_subnet_group_name        = aws_db_subnet_group.tfe.name
+  db_subnet_group_name        = aws_db_subnet_group.rds.name
   delete_automated_backups    = true
   deletion_protection         = false
   engine_version              = "14.1"
