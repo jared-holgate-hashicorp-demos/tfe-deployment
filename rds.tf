@@ -29,8 +29,8 @@ resource "aws_db_instance" "postgresql" {
   allocated_storage           = 20
   engine                      = "postgres"
   instance_class              = "db.m4.xlarge"
-  password                    = random_password.rds_password.value
-  username                    = random_password.rds_username.value
+  password                    = random_password.rds_password.result
+  username                    = random_password.rds_username.result
   allow_major_version_upgrade = false
   apply_immediately           = true
   auto_minor_version_upgrade  = true
