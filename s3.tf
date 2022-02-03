@@ -3,30 +3,6 @@ resource "aws_kms_key" "data" {
   deletion_window_in_days = 10
 }
 
-resource "aws_iam_instance_profile" "tfe" {
-  name_prefix = "${var.friendly_name_prefix}-tfe"
-  role        = aws_iam_role.instance_role.name
-}
-
-resource "aws_iam_role" "instance_role" {
-  name_prefix        = "${var.friendly_name_prefix}-tfe"
-  assume_role_policy = data.aws_iam_policy_document.instance_role.json
-}
-
-data "aws_iam_policy_document" "instance_role" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "sts:AssumeRole",
-    ]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-  }
-}
-
 resource "aws_s3_bucket" "tfe_data_bucket" {
   bucket = "${var.friendly_name_prefix}-tfe-data"
   acl    = "private"
