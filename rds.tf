@@ -51,7 +51,7 @@ resource "aws_db_instance" "postgresql" {
   storage_type                = "gp2"
   vpc_security_group_ids      = [aws_security_group.rds.id]
 
-  tags {
+  tags = {
     Name = "${var.friendly_name_prefix}-tfedb"
   }
 }
