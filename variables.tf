@@ -22,6 +22,24 @@ variable "replicated_sub_domain" {
   default     = "replicated"
 }
 
+variable "network_cidr" {
+  type        = string
+  description = "(Optional) CIDR block for VPC."
+  default     = "10.0.0.0/16"
+}
+
+variable "network_public_subnet_cidrs" {
+  type        = list(string)
+  description = "(Optional) List of public subnet CIDR ranges to create in VPC."
+  default     = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24"]
+}
+
+variable "network_private_subnet_cidrs" {
+  type        = list(string)
+  description = "(Optional) List of private subnet CIDR ranges to create in VPC."
+  default     = ["10.0.100.0/24", "10.0.101.0/24", "10.0.102.0/24"]
+}
+
 variable "tfe_ip_restrictions" {
   type        = list(string)
   description = "The IP restrictions for tfe."

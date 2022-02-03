@@ -21,11 +21,6 @@ resource "aws_security_group" "bastion" {
   }
 }
 
-locals {
-  public_subnet_cidrs  = [for index in range(3) : "10.0.${index}.0/24"]
-  private_subnet_cidrs = [for index in range(3) : "10.0.${100 + index}.0/24"]
-}
-
 resource "aws_security_group" "tfe" {
   name   = "${var.friendly_name_prefix}-tfe-security-group"
   vpc_id = aws_vpc.main.id
@@ -41,29 +36,28 @@ resource "aws_security_group" "tfe" {
     protocol    = "tcp"
     from_port   = 22
     to_port     = 22
-    cidr_blocks = local.public_subnet_cidrs
+    cidr_blocks = var.network_public_subnet_cidrs
   }
 
   ingress {
     protocol    = "tcp"
     from_port   = 80
     to_port     = 80
-    cidr_blocks = local.public_subnet_cidrs
+    cidr_blocks = var.network_public_subnet_cidrs
   }
 
   ingress {
     protocol    = "tcp"
     from_port   = 8800
     to_port     = 8800
-    cidr_blocks = local.public_subnet_cidrs
+    cidr_blocks = var.network_public_subnet_cidrs
   }
-
 
   ingress {
     protocol    = "tcp"
     from_port   = 443
     to_port     = 443
-    cidr_blocks = local.public_subnet_cidrs
+    cidr_blocks = var.network_public_subnet_cidrs
   }
 
   tags = {
@@ -116,13 +110,17 @@ resource "aws_security_group" "rds" {
     protocol    = "tcp"
     from_port   = 5432
     to_port     = 5432
-    cidr_blocks = local.private_subnet_cidrs
+    cidr_blocks = var.network_private_subnet_cidrs
   }
 
   ingress {
     protocol    = "tcp"
     from_port   = 5432
     to_port     = 5432
-    cidr_blocks = local.private_subnet_cidrs
+    cidr_blocks = var.network_private_subnet_cidrs
+  }
+
+  tags = {
+    Name = "${var.friendly_name_prefix}-rds-security-group"
   }
 }

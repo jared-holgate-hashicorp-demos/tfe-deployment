@@ -1,7 +1,7 @@
 resource "aws_subnet" "public" {
   count                   = local.subnet_count
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.${count.index}.0/24"
+  cidr_block              = var.network_public_subnet_cidrs[count.index]
   map_public_ip_on_launch = true
   availability_zone_id    = data.aws_availability_zones.available.zone_ids[count.index]
 
@@ -21,7 +21,7 @@ resource "aws_route_table_association" "bastion" {
 resource "aws_subnet" "private" {
   count                = local.subnet_count
   vpc_id               = aws_vpc.main.id
-  cidr_block           = "10.0.${count.index + 100}.0/24"
+  cidr_block           = var.network_private_subnet_cidrs[count.index]
   availability_zone_id = data.aws_availability_zones.available.zone_ids[count.index]
 
   tags = {

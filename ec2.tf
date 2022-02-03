@@ -24,11 +24,16 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+locals {
+  bastion_ip = cidrhost(var.network_public_subnet_cidrs[0], 101)
+  tfe_ips = [ for i, subnet in var.network_private_subnet_cidrs : cidrhost(subnet, i + 100) ]
+}
+
 resource "aws_eip" "bastion" {
   vpc = true
 
   instance                  = aws_instance.bastion.id
-  associate_with_private_ip = "10.0.0.101"
+  associate_with_private_ip = local.bastion_ip
 
   tags = {
     Name = "${var.friendly_name_prefix}-bastion-eip"
@@ -37,7 +42,7 @@ resource "aws_eip" "bastion" {
 
 resource "aws_network_interface" "bastion" {
   subnet_id       = aws_subnet.public[0].id
-  private_ips     = ["10.0.0.101"]
+  private_ips     = [local.bastion_ip]
   security_groups = [aws_security_group.bastion.id]
   depends_on      = [aws_route_table.internet]
 
@@ -72,7 +77,7 @@ EOF
 resource "aws_network_interface" "tfe" {
   count           = 2
   subnet_id       = aws_subnet.private[count.index].id
-  private_ips     = ["10.0.${count.index + 100}.10${count.index}"]
+  private_ips     = [local.tfe_ips[count.index]]
   security_groups = [aws_security_group.tfe.id]
   depends_on      = [aws_route_table.private]
 
