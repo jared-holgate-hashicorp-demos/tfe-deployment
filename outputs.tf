@@ -10,6 +10,10 @@ output "rds_endpoint" {
   value = aws_db_instance.postgresql.endpoint
 }
 
+output "rds_db_name" {
+  value = "tfedb"
+}
+
 output "rds_username" {
   value = nonsensitive(random_password.rds_username.result)
 }
@@ -28,8 +32,4 @@ output "s3_bucket_region" {
 
 output "s3_bucket_key_arn" {
   value = aws_kms_key.data.arn
-}
-
-output "s3_bucket_key_id" {
-  value = aws_kms_key.data.key_id
 }
