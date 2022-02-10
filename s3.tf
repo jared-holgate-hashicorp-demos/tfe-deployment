@@ -3,6 +3,22 @@ resource "aws_kms_key" "data" {
   deletion_window_in_days = 10
 }
 
+resource "aws_kms_grant" "data" {
+  grantee_principal = aws_iam_role.instance_role.arn
+  key_id            = aws_kms_key.data.key_id
+  operations = [
+    "Decrypt",
+    "DescribeKey",
+    "Encrypt",
+    "GenerateDataKey",
+    "GenerateDataKeyPair",
+    "GenerateDataKeyPairWithoutPlaintext",
+    "GenerateDataKeyPairWithoutPlaintext",
+    "ReEncryptFrom",
+    "ReEncryptTo",
+  ]
+}
+
 resource "aws_s3_bucket" "tfe_data_bucket" {
   bucket = "${var.friendly_name_prefix}-tfe-data"
   acl    = "private"

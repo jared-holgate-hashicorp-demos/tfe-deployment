@@ -26,6 +26,10 @@ output "s3_bucket_region" {
   value = aws_s3_bucket.tfe_data_bucket.region
 }
 
-output "s3_bucket_key" {
+output "s3_bucket_key_arn" {
   value = aws_kms_key.data.arn
+}
+
+output "s3_bucket_key_id" {
+  value = aws_kms_key.data.key_id
 }
