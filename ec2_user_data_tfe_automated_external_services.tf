@@ -27,8 +27,8 @@ EOF
 
   tfe_config_automated_external_services_tfe = <<-EOF
     {
-        "disk_path": {
-            "value": "/tfe"
+        "aws_instance_profile": {
+            "value": "1"
         },
         "enc_password": {
             "value": "${random_password.replicated.result}"
@@ -39,8 +39,38 @@ EOF
         "installation_type": {
             "value": "production"
         },
+        "pg_dbname": {
+            "value": "tfedb"
+        },
+        "pg_extra_params": {
+            "value": "sslmode=require"
+        },
+        "pg_netloc": {
+            "value": "${aws_db_instance.postgresql.endpoint}"
+        },
+        "pg_password": {
+            "value": "${random_password.rds_password.result}"
+        },
+        "pg_user": {
+            "value": "${andom_password.rds_username.result}"
+        },
+        "placement": {
+            "value": "placement_s3"
+        },
         "production_type": {
-            "value": "disk"
+            "value": "external"
+        },
+        "s3_bucket": {
+            "value": "${aws_s3_bucket.tfe_data_bucket.id}"
+        },
+        "s3_region": {
+            "value": "${aws_s3_bucket.tfe_data_bucket.region}"
+        },
+        "s3_sse": {
+            "value": "aws:kms"
+        },
+        "s3_sse_kms_key_id": {
+            "value": "${aws_kms_key.data.arn}"
         }
     }
 EOF

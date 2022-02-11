@@ -13,7 +13,7 @@ resource "aws_security_group" "bastion" {
     protocol    = "tcp"
     from_port   = 22
     to_port     = 22
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = length(var.bastion_ip_restrictions) == 0 ? ["0.0.0.0/0"] : var.bastion_ip_restrictions
   }
 
   tags = {

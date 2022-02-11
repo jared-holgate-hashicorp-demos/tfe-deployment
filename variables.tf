@@ -40,6 +40,12 @@ variable "network_private_subnet_cidrs" {
   default     = ["10.0.100.0/24", "10.0.101.0/24", "10.0.102.0/24"]
 }
 
+variable "bastion_ip_restrictions" {
+  type        = list(string)
+  description = "The IP restrictions for the bastion server."
+  default     = ["217.155.46.217/32"]
+}
+
 variable "tfe_ip_restrictions" {
   type        = list(string)
   description = "The IP restrictions for tfe."
