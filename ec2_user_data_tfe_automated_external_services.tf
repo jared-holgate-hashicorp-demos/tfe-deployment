@@ -52,7 +52,7 @@ EOF
             "value": "${random_password.rds_password.result}"
         },
         "pg_user": {
-            "value": "${andom_password.rds_username.result}"
+            "value": "${random_password.rds_username.result}"
         },
         "placement": {
             "value": "placement_s3"
