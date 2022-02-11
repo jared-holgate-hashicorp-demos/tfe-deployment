@@ -21,22 +21,30 @@ resource "aws_kms_grant" "data" {
 
 resource "aws_s3_bucket" "tfe_data_bucket" {
   bucket = "${var.friendly_name_prefix}-tfe-data"
-  acl    = "private"
+  force_destroy = true
+}
 
-  versioning {
-    enabled = true
+resource "aws_s3_bucket_versioning" "tfe_data_bucket" {
+  bucket = aws_s3_bucket.tfe_data_bucket.id
+  versioning_configuration {
+    status = "Enabled"
   }
+}
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        kms_master_key_id = aws_kms_key.data.arn
-        sse_algorithm     = "aws:kms"
-      }
+resource "aws_s3_bucket_server_side_encryption_configuration" "tfe_data_bucket" {
+  bucket = aws_s3_bucket.tfe_data_bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.data.arn
+      sse_algorithm     = "aws:kms"
     }
   }
+}
 
-  force_destroy = true
+resource "aws_s3_bucket_acl" "tfe_data_bucket" {
+  bucket = aws_s3_bucket.tfe_data_bucket.id
+  acl    = "private"
 }
 
 resource "aws_s3_bucket_public_access_block" "tfe_data" {

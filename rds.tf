@@ -43,7 +43,7 @@ resource "aws_db_instance" "postgresql" {
   identifier_prefix           = "${var.friendly_name_prefix}-tfedb"
   max_allocated_storage       = 0
   multi_az                    = true
-  name                        = "tfedb"
+  db_name                     = "tfedb"
   port                        = 5432
   publicly_accessible         = false
   skip_final_snapshot         = true
