@@ -1,6 +1,6 @@
 locals {
   tfe_script_automated_active_active = <<-EOF
-   echo "Configuring TFE with Active Active"
+    echo "Configuring TFE with Active Active"
     tfeConfigFile=$(cat <<-END
     ${local.tfe_config_automated_active_active_tfe}
     END
