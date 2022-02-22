@@ -15,7 +15,7 @@ locals {
 EOF
 
   tfe_config_automated_active_active_replicated = <<-EOF
-   {
+    {
         "DaemonAuthenticationType":     "password",
         "DaemonAuthenticationPassword": "${random_password.replicated.result}",
         "TlsBootstrapType":             "self-signed",
@@ -26,7 +26,7 @@ EOF
 EOF
 
   tfe_config_automated_active_active_tfe = <<-EOF
-   {
+    {
         "aws_instance_profile": {
             "value": "1"
         },
