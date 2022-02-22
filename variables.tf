@@ -43,7 +43,7 @@ variable "network_private_subnet_cidrs" {
 variable "bastion_ip_restrictions" {
   type        = list(string)
   description = "The IP restrictions for the bastion server."
-  default     = ["217.155.46.217/32"]
+  default     = []
 }
 
 variable "tfe_ip_restrictions" {
