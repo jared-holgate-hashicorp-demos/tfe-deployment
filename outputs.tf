@@ -33,3 +33,15 @@ output "s3_bucket_region" {
 output "s3_bucket_key_arn" {
   value = aws_kms_key.data.arn
 }
+
+output "redis_password" {
+  value = random_id.redis_password.hex
+}
+
+output "redis_endpoint" {
+  value = aws_elasticache_replication_group.redis.primary_endpoint_address
+}
+
+output "redis_port" {
+  value = aws_elasticache_replication_group.redis.port
+}
