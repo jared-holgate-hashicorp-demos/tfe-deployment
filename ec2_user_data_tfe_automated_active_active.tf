@@ -1,14 +1,14 @@
 locals {
   tfe_script_automated_active_active = <<-EOF
-   echo "Configuring TFE with Mounted Disk"
+   echo "Configuring TFE with Active Active"
     tfeConfigFile=$(cat <<-END
-    ${local.tfe_config_automated_mounted_disk_tfe}
+    ${local.tfe_config_automated_active_active_tfe}
     END
     )
     echo "$tfeConfigFile" > /etc/tfe_settings.json
 
     replicatedConfigFile=$(cat <<-END
-    ${local.tfe_config_automated_mounted_disk_replicated}
+    ${local.tfe_config_automated_active_active_replicated}
     END
     )
     echo "$replicatedConfigFile" > /etc/replicated.conf
