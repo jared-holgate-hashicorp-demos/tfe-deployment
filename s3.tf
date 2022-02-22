@@ -20,7 +20,7 @@ resource "aws_kms_grant" "data" {
 }
 
 resource "aws_s3_bucket" "tfe_data_bucket" {
-  bucket = "${var.friendly_name_prefix}-tfe-data"
+  bucket        = "${var.friendly_name_prefix}-tfe-data"
   force_destroy = true
 }
 

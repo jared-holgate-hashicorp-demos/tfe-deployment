@@ -28,10 +28,10 @@ resource "aws_elasticache_subnet_group" "tfe" {
 }
 
 resource "aws_elasticache_replication_group" "redis" {
-  node_type                     = "cache.m4.large"
-  number_cache_clusters         = 1
-  replication_group_description = "The replication group of the Redis deployment for TFE."
-  replication_group_id          = "${var.friendly_name_prefix}-redis"
+  node_type            = "cache.m4.large"
+  num_cache_clusters   = 1
+  description          = "The replication group of the Redis deployment for TFE."
+  replication_group_id = "${var.friendly_name_prefix}-redis"
 
   apply_immediately          = true
   automatic_failover_enabled = false
