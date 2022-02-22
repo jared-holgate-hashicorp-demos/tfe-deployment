@@ -124,3 +124,27 @@ resource "aws_security_group" "rds" {
     Name = "${var.friendly_name_prefix}-rds-security-group"
   }
 }
+
+resource "aws_security_group" "redis" {
+  description = "The security group of the Redis deployment for TFE."
+  name        = "${var.friendly_name_prefix}-redis-security-group"
+  vpc_id      = aws_vpc.main.id
+
+  egress {
+    protocol    = "tcp"
+    from_port   = 6379
+    to_port     = 6379
+    cidr_blocks = var.network_private_subnet_cidrs
+  }
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 6379
+    to_port     = 6379
+    cidr_blocks = var.network_private_subnet_cidrs
+  }
+
+  tags = {
+    Name = "${var.friendly_name_prefix}-redis-security-group"
+  }
+}
