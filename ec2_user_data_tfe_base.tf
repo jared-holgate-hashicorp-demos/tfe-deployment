@@ -55,7 +55,7 @@ EOF
 
   tfe_script_install = <<-EOF
     echo "Installing TFE"
-    curl https://install.terraform.io/ptfe/stable | sudo bash ${var.install_type == "tfe_automated_active_active" ? "-s disable-replicated-ui" : ""}
+    curl https://install.terraform.io/ptfe/stable | sudo bash -s no-proxy -private-address=127.0.0.1 -public-address=127.0.0.1${var.install_type == "tfe_automated_active_active" ? " disable-replicated-ui" : ""}
 EOF
 
   tfe_script_get_license = <<-EOF

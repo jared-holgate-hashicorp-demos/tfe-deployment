@@ -106,7 +106,7 @@ resource "aws_instance" "tfe" {
     }
   }
 
-  user_data = (count.index == 0 && var.install_type != "tfe_manual" && var.install_type != "apache_hello_world") ? "${local.final_tfe_script}${local.tfe_script_setup_admin_user}" : local.final_tfe_script
+  user_data = format("%s%s", replace(local.final_tfe_script, "127.0.0.1", local.tfe_ips[count.index]), count.index == 0 && var.install_type != "tfe_manual" && var.install_type != "apache_hello_world" ? local.tfe_script_setup_admin_user : "")
 
   tags = {
     Name = "${var.friendly_name_prefix}-tfe-server-${count.index + 1}"
