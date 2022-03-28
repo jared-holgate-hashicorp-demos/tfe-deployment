@@ -89,7 +89,7 @@ resource "aws_network_interface" "tfe" {
 resource "aws_instance" "tfe" {
   count                = 2
   ami                  = data.aws_ami.ubuntu.id
-  instance_type        = "m5.xlarge"
+  instance_type        = "t2.large"
   key_name             = aws_key_pair.main.key_name
   availability_zone    = data.aws_availability_zones.available.names[count.index]
   iam_instance_profile = aws_iam_instance_profile.tfe.id
