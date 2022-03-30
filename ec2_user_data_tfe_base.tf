@@ -21,33 +21,34 @@ resource "random_password" "tfe" {
 }
 
 locals {
+  tfe_volume_name = local.tfe_instance_size == "t2.large" ? "xvdh" : "nvme1n1"
   tfe_script_base = <<-EOF
     #!/bin/bash
     apt update -y
 
     echo "Mount TFE Volume"
 
-    volumeData=$(lsblk | grep nvme1n1)
+    volumeData=$(lsblk | grep ${local.tfe_volume_name})
     until [ ! -z "$volumeData" ]; do
       echo "Looking for volume..."
       sleep 5
-      volumeData=$(lsblk | grep nvme1n1)
+      volumeData=$(lsblk | grep ${local.tfe_volume_name})
     done
 
     echo "Found the volume, formatting it"
-    mkfs -t xfs -f /dev/nvme1n1
+    mkfs -t xfs -f /dev/${local.tfe_volume_name}
 
-    mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
+    mountId=$(blkid | grep '/dev/${local.tfe_volume_name}*' | cut -f 2 -d '"')
     until [ ! -z "$mountId" ]; do
       echo "Looking for mount id..."
       sleep 5
-      mountId=$(blkid | grep '/dev/nvme1n1*' | cut -f 2 -d '"')
+      mountId=$(blkid | grep '/dev/${local.tfe_volume_name}*' | cut -f 2 -d '"')
     done
 
     echo "Found mount id, mounting it and adding to fstab"
 
     mkdir /tfe
-    mount /dev/nvme1n1 /tfe
+    mount /dev/${local.tfe_volume_name} /tfe
     echo "UUID=$mountId  /tfe  xfs  defaults,nofail  0  2" >> /etc/fstab
 
     echo "Finished mounting tfe volume"
