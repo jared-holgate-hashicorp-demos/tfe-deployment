@@ -33,7 +33,7 @@ resource "aws_lb_target_group" "replicated" {
 }
 
 resource "aws_lb_target_group_attachment" "tfe" {
-  count            = var.install_type == "apache_hello_world" ? 2 : 1
+  count            = var.install_type == "apache_hello_world" || "tfe_automated_active_active" ? 2 : 1
   target_group_arn = aws_lb_target_group.tfe.arn
   target_id        = aws_instance.tfe[count.index].id
   port             = var.install_type == "apache_hello_world" ? 80 : 443
