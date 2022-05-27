@@ -15,6 +15,14 @@ resource "aws_lb_target_group" "tfe" {
   port     = var.install_type == "apache_hello_world" ? 80 : 443
   protocol = var.install_type == "apache_hello_world" ? "HTTP" : "HTTPS"
   vpc_id   = aws_vpc.main.id
+  health_check {
+    path                = var.install_type == "apache_hello_world" ? "/" : "/_health_check"
+    interval            = 30
+    protocol            = var.install_type == "apache_hello_world" ? "HTTP" : "HTTPS"
+    timeout             = 5
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+  }
 
   tags = {
     Name = "${var.friendly_name_prefix}-alb-target-group"
