@@ -24,6 +24,10 @@ resource "aws_lb_target_group" "tfe" {
     unhealthy_threshold = 3
   }
 
+  stickiness {
+    type = "source_ip"
+  }
+
   tags = {
     Name = "${var.friendly_name_prefix}-alb-target-group"
   }
