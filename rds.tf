@@ -28,7 +28,7 @@ resource "aws_db_subnet_group" "rds" {
 resource "aws_db_instance" "postgresql" {
   allocated_storage           = 20
   engine                      = "postgres"
-  instance_class              = "db.t2.small"
+  instance_class              = var.rds_instance_type
   password                    = random_password.rds_password.result
   username                    = random_password.rds_username.result
   allow_major_version_upgrade = false

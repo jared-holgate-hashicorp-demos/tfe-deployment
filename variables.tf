@@ -4,6 +4,23 @@ variable "friendly_name_prefix" {
   default     = "jfh-tfe-poc"
 }
 
+variable "ec2_instance_type" {
+  type        = string
+  description = "(Optional) EC2 instance type to use for the test environment."
+  default     = "t2.large"
+}
+
+variable "rds_instance_type" {
+  type        = string
+  description = "(Optional) RDS instance type to use for the test environment."
+  default     = "db.t2.small"
+}
+
+variable "elasticache_instance_type" {
+  type = string
+  default = "cache.m5.large"
+}
+
 variable "root_domain" {
   type        = string
   description = "(Optional) Domain name."

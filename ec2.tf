@@ -27,7 +27,7 @@ data "aws_ami" "ubuntu" {
 locals {
   bastion_ip        = cidrhost(var.network_public_subnet_cidrs[0], 101)
   tfe_ips           = [for i, subnet in var.network_private_subnet_cidrs : cidrhost(subnet, i + 101)]
-  tfe_instance_size = "t2.large"
+  tfe_instance_size = var.ec2_instance_type
 }
 
 resource "aws_eip" "bastion" {
