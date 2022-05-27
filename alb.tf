@@ -25,7 +25,7 @@ resource "aws_lb_target_group" "tfe" {
   }
 
   stickiness {
-    type = "source_ip"
+    type = "lb_cookie"
   }
 
   tags = {
