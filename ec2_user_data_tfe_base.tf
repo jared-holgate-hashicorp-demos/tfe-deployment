@@ -80,7 +80,11 @@ EOF
 
     initialToken=$(replicated admin --tty=0 retrieve-iact | tr -d '\r')
     
-    curl -v -k -L --post301 --header "Content-Type: application/json" --request POST --data '{ "username": "admin", "email": "demo@hashicorp.com", "password": "${random_password.tfe.result}" }' https://localhost/admin/initial-admin-user?token=$initialToken
+    while ! curl -v -k -L --post301 --header "Content-Type: application/json" --request POST --data '{ "username": "admin", "email": "demo@hashicorp.com", "password": "${random_password.tfe.result}" }' https://localhost/admin/initial-admin-user?token=$initialToken; do
+        currentDate=`date +"%Y-%m-%d %T"`
+        echo "$currentDate - Attempting to create initial admin user"
+        sleep 5
+    done
 EOF
 
   final_tfe_script = (var.install_type == "apache_hello_world" ? local.hello_word_script :
