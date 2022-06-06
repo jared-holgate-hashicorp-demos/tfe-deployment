@@ -73,7 +73,8 @@ EOF
     echo "Creating default TFE login"
 
     while ! curl -ksfS --connect-timeout 5 https://localhost/_health_check; do
-        echo "Waiting for TFE to be ready"
+        currentDate=`date +"%Y-%m-%d %T"`
+        echo "$currentDate - Waiting for TFE to be ready"
         sleep 5
     done
 
