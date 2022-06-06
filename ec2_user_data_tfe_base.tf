@@ -72,14 +72,14 @@ EOF
   tfe_script_setup_admin_user = <<-EOF
     echo "Creating default TFE login"
 
-    while ! curl -ksfS --connect-timeout 5 https://${var.tfe_sub_domain}.${var.root_domain}/_health_check; do
+    while ! curl -ksfS --connect-timeout 5 https://localhost/_health_check; do
         echo "Waiting for TFE to be ready"
         sleep 5
     done
 
     initialToken=$(replicated admin --tty=0 retrieve-iact | tr -d '\r')
     
-    curl -v --header "Content-Type: application/json" --request POST --data '{ "username": "admin", "email": "demo@hashicorp.com", "password": "${random_password.tfe.result}" }' https://${var.tfe_sub_domain}.${var.root_domain}/admin/initial-admin-user?token=$initialToken
+    curl -v --header "Content-Type: application/json" --request POST --data '{ "username": "admin", "email": "demo@hashicorp.com", "password": "${random_password.tfe.result}" }' https://localhost/admin/initial-admin-user?token=$initialToken
 EOF
 
   final_tfe_script = (var.install_type == "apache_hello_world" ? local.hello_word_script :
