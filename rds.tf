@@ -2,8 +2,7 @@ resource "random_password" "rds_username" {
   length      = 20
   min_lower   = 1
   min_upper   = 1
-  min_numeric = 1
-  number      = true
+  number      = false
   lower       = true
   upper       = true
   special     = false
