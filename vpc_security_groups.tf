@@ -60,6 +60,13 @@ resource "aws_security_group" "tfe" {
     cidr_blocks = var.network_public_subnet_cidrs
   }
 
+  ingress {
+    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = var.network_private_subnet_cidrs
+  }
+
   tags = {
     Name = "${var.friendly_name_prefix}-tfe-security-group"
   }
