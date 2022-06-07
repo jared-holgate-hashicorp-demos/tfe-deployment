@@ -3,7 +3,7 @@ resource "random_password" "replicated" {
   min_lower   = 1
   min_upper   = 1
   min_numeric = 1
-  number      = true
+  numeric     = true
   lower       = true
   upper       = true
   special     = false
@@ -14,7 +14,7 @@ resource "random_password" "tfe" {
   min_lower   = 1
   min_upper   = 1
   min_numeric = 1
-  number      = true
+  numeric     = true
   lower       = true
   upper       = true
   special     = false
