@@ -63,7 +63,7 @@ resource "aws_security_group" "tfe" {
   ingress {
     protocol    = "tcp"
     from_port   = 0
-    to_port     = 0
+    to_port     = 65535
     cidr_blocks = var.network_private_subnet_cidrs
   }
 
