@@ -28,7 +28,7 @@ EOF
   tfe_config_automated_active_active_tfe = <<-EOF
     {
         "capacity_concurrency": {
-            "value": "20"
+            "value": "40"
         },
         "aws_instance_profile": {
             "value": "1"
