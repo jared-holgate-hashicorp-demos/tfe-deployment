@@ -33,6 +33,12 @@ variable "tfe_sub_domain" {
   default     = "tfe"
 }
 
+variable "providers_sub_domain" {
+  type        = string
+  description = "(Optional) Providers Domain name."
+  default     = "providers"
+}
+
 variable "replicated_sub_domain" {
   type        = string
   description = "The sub-domain for replicated."
