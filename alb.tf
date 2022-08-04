@@ -162,17 +162,9 @@ resource "aws_lb_listener" "tfe" {
   }
 }
 
-resource "aws_lb_listener" "providers" {
-  load_balancer_arn = aws_lb.tfe.arn
-  port              = "443"
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = aws_acm_certificate.providers.arn
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.tfe.arn
-  }
+resource "aws_lb_listener_certificate" "providers" {
+  listener_arn    = aws_lb_listener.tfe.arn
+  certificate_arn = aws_acm_certificate.providers.arn
 }
 
 resource "aws_lb_listener" "replicated" {
