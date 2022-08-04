@@ -33,29 +33,6 @@ resource "aws_lb_target_group" "tfe" {
   }
 }
 
-resource "aws_lb_target_group" "providers" {
-  name     = "${var.friendly_name_prefix}-prv-tg"
-  port     = var.install_type == "apache_hello_world" ? 80 : 443
-  protocol = var.install_type == "apache_hello_world" ? "HTTP" : "HTTPS"
-  vpc_id   = aws_vpc.main.id
-  health_check {
-    path                = var.install_type == "apache_hello_world" ? "/" : "/_health_check"
-    interval            = 30
-    protocol            = var.install_type == "apache_hello_world" ? "HTTP" : "HTTPS"
-    timeout             = 5
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
-  }
-
-  stickiness {
-    type = "lb_cookie"
-  }
-
-  tags = {
-    Name = "${var.friendly_name_prefix}-prv-tg"
-  }
-}
-
 resource "aws_lb_target_group" "replicated" {
   name     = "${var.friendly_name_prefix}-rep-tg"
   port     = 8800
@@ -70,13 +47,6 @@ resource "aws_lb_target_group" "replicated" {
 resource "aws_lb_target_group_attachment" "tfe" {
   count            = var.install_type == "apache_hello_world" || var.install_type == "tfe_automated_active_active" ? 2 : 1
   target_group_arn = aws_lb_target_group.tfe.arn
-  target_id        = aws_instance.tfe[count.index].id
-  port             = var.install_type == "apache_hello_world" ? 80 : 443
-}
-
-resource "aws_lb_target_group_attachment" "providers" {
-  count            = var.install_type == "apache_hello_world" || var.install_type == "tfe_automated_active_active" ? 2 : 1
-  target_group_arn = aws_lb_target_group.providers.arn
   target_id        = aws_instance.tfe[count.index].id
   port             = var.install_type == "apache_hello_world" ? 80 : 443
 }
@@ -201,7 +171,7 @@ resource "aws_lb_listener" "providers" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.providers.arn
+    target_group_arn = aws_lb_target_group.tfe.arn
   }
 }
 
