@@ -45,6 +45,12 @@ variable "replicated_sub_domain" {
   default     = "replicated"
 }
 
+variable "monitoring_sub_domain" {
+  type        = string
+  description = "The sub-domain for monitoring."
+  default     = "monitoring"
+}
+
 variable "network_cidr" {
   type        = string
   description = "(Optional) CIDR block for VPC."
