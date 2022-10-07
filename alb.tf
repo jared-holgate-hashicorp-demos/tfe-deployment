@@ -49,6 +49,14 @@ resource "aws_lb_target_group" "monitoring" {
   port     = 9091
   protocol = "HTTPS"
   vpc_id   = aws_vpc.main.id
+  health_check {
+    path                = "/metrics"
+    interval            = 30
+    protocol            = "HTTPS"
+    timeout             = 5
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+  }
 
   tags = {
     Name = "${var.friendly_name_prefix}-mon-tg"

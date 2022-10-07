@@ -55,6 +55,13 @@ resource "aws_security_group" "tfe" {
 
   ingress {
     protocol    = "tcp"
+    from_port   = 9091
+    to_port     = 9091
+    cidr_blocks = var.network_public_subnet_cidrs
+  }
+
+  ingress {
+    protocol    = "tcp"
     from_port   = 443
     to_port     = 443
     cidr_blocks = var.network_public_subnet_cidrs
@@ -101,6 +108,13 @@ resource "aws_security_group" "alb" {
     protocol    = "tcp"
     from_port   = 8800
     to_port     = 8800
+    cidr_blocks = length(var.replicated_ip_restrictions) == 0 ? ["0.0.0.0/0"] : var.replicated_ip_restrictions
+  }
+
+    ingress {
+    protocol    = "tcp"
+    from_port   = 9091
+    to_port     = 9091
     cidr_blocks = length(var.replicated_ip_restrictions) == 0 ? ["0.0.0.0/0"] : var.replicated_ip_restrictions
   }
 
