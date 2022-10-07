@@ -27,6 +27,9 @@ EOF
 
   tfe_config_automated_mounted_disk_tfe = <<-EOF
     {
+        "metrics_endpoint_enabled": {
+            "value": "1"
+        },
         "disk_path": {
             "value": "/tfe"
         },

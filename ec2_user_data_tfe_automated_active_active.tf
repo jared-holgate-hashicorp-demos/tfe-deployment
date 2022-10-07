@@ -27,6 +27,9 @@ EOF
 
   tfe_config_automated_active_active_tfe = <<-EOF
     {
+        "metrics_endpoint_enabled": {
+            "value": "1"
+        },
         "capacity_concurrency": {
             "value": "40"
         },

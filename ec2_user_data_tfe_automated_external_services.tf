@@ -27,6 +27,9 @@ EOF
 
   tfe_config_automated_external_services_tfe = <<-EOF
     {
+        "metrics_endpoint_enabled": {
+            "value": "1"
+        },
         "aws_instance_profile": {
             "value": "1"
         },
