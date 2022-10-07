@@ -38,7 +38,7 @@ resource "aws_db_instance" "postgresql" {
   db_subnet_group_name        = aws_db_subnet_group.rds.name
   delete_automated_backups    = true
   deletion_protection         = false
-  engine_version              = "12.8"
+  engine_version              = "12.11"
   identifier_prefix           = "${var.friendly_name_prefix}-tfedb"
   max_allocated_storage       = 0
   multi_az                    = true
