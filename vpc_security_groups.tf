@@ -111,7 +111,7 @@ resource "aws_security_group" "alb" {
     cidr_blocks = length(var.replicated_ip_restrictions) == 0 ? ["0.0.0.0/0"] : var.replicated_ip_restrictions
   }
 
-    ingress {
+  ingress {
     protocol    = "tcp"
     from_port   = 9091
     to_port     = 9091
